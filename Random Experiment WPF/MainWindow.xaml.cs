@@ -104,6 +104,8 @@ namespace Random_Experiment_WPF
             double sum_of_squares = squares_query.Sum();
 
             double std_dev = Math.Sqrt(sum_of_squares / values.Count());
+
+
         }
 
         public void PopulateGraph()
