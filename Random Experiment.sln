@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Random Experiment WPF", "Random Experiment WPF\Random Experiment WPF.csproj", "{6CE96BC6-C863-4471-8D5B-7E3C106AA64B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Random Experiment Server", "Random Experiment Server\Random Experiment Server.csproj", "{0D96FD38-CD30-4D6F-A16A-2C6E60AC8FF5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CE96BC6-C863-4471-8D5B-7E3C106AA64B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CE96BC6-C863-4471-8D5B-7E3C106AA64B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CE96BC6-C863-4471-8D5B-7E3C106AA64B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CE96BC6-C863-4471-8D5B-7E3C106AA64B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D96FD38-CD30-4D6F-A16A-2C6E60AC8FF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D96FD38-CD30-4D6F-A16A-2C6E60AC8FF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D96FD38-CD30-4D6F-A16A-2C6E60AC8FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D96FD38-CD30-4D6F-A16A-2C6E60AC8FF5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C4629841-EC58-440E-954C-ED7843B2124B}
+	EndGlobalSection
+EndGlobal
