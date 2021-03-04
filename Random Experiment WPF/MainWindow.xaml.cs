@@ -18,7 +18,7 @@ using LiveCharts;
 using LiveCharts.Wpf;
 using MahApps.Metro.Controls;
 using System.Diagnostics;
-using System.Threading;
+using Microsoft.Win32;
 
 namespace Random_Experiment_WPF
 {
@@ -31,6 +31,13 @@ namespace Random_Experiment_WPF
         public string[] Labels { get; set; }
         public Func<double, string> YFormatter { get; set; }
         public Random myRandom = new Random(Math.Abs((int)DateTime.Now.Ticks));
+        public Info myUser { get; set; }
+
+        public struct Info 
+        { 
+            public string user { get; set; }
+            public int time_zone { get; set; }
+        }
 
         public MainWindow()
         {
@@ -42,7 +49,7 @@ namespace Random_Experiment_WPF
             TimeSpan currentOffset = localZone.GetUtcOffset(DateTime.Now);
 
             this.lbTimeZone.Content = $"UTC{(currentOffset.Hours > 0 ? "+" : "")}{currentOffset.Hours}";
-
+           
             string macAddr =
             (
                 from nic in NetworkInterface.GetAllNetworkInterfaces()
@@ -50,10 +57,12 @@ namespace Random_Experiment_WPF
                 select nic.GetPhysicalAddress().ToString()
             ).FirstOrDefault();
 
-            string idRaw = macAddr + "_5.some_salt_8899211";
+            string idRaw = macAddr + "_5.some_stuff_8899211";
             string idSHA = SHA.GetSHAString(SHA.GetHash(idRaw));
 
             this.lbID.Content = idSHA;
+
+            this.myUser = new Info() { user = idSHA, time_zone = currentOffset.Hours };
 
             int rndBase = this.myRandom.Next(65536) * 256;
             int rndOffset = this.myRandom.Next(Math.Abs((int)DateTime.UtcNow.Ticks % 65536)) + 256;
@@ -62,6 +71,31 @@ namespace Random_Experiment_WPF
 
             Thread computeThread = new Thread(this.Compute);
             computeThread.Start(null);
+
+            Console.WriteLine(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            this.SetStartup(false);
+        }
+
+        private bool SetStartup(bool onOff)
+        {
+            try
+            {
+                RegistryKey rk = Registry.CurrentUser.OpenSubKey
+                    ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+                if (onOff)
+                    rk.SetValue("random_experiment", System.Reflection.Assembly.GetExecutingAssembly().Location);
+                else
+                    rk.DeleteValue("random_experiment", false);
+
+                return true;
+            }
+            catch 
+            {
+                MessageBox.Show("Couldn't set program to run at  startup. You can try starting the program with administrator rights.", "Error setting startup.");
+                return false;
+            }
         }
 
         private void Compute(object data)
@@ -105,7 +139,33 @@ namespace Random_Experiment_WPF
 
             double std_dev = Math.Sqrt(sum_of_squares / values.Count());
         }
-
+        private void MetroWindow_StateChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState == WindowState.Minimized)
+                this.ShowInTaskbar = false;
+            else
+                this.ShowInTaskbar = true;
+        }
+        private void TaskbarIcon_TrayLeftMouseDown(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Minimized)
+                this.cmTaskBarShow_Click(sender, e);
+            else
+                this.cmTaskBarHide_Click(sender, e);
+        }
+        private void cmTaskBarShow_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Normal;
+            this.Activate();
+        }
+        private void cmTaskBarHide_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+        private void cmQuit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
         public void PopulateGraph()
         {
          

@@ -6,9 +6,18 @@
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:Random_Experiment_WPF"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="838.011">
-    <Grid Margin="10,10,10,10">
+        Title="MainWindow" Height="450" Width="838.011" StateChanged="MetroWindow_StateChanged">
+    <Grid Margin="10,10,10,10" >
+        <tb:TaskbarIcon IconSource="Resources/random_experiment.ico" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu Background="WhiteSmoke">
+                    <MenuItem x:Name="cmTaskBarShow" Header="Show" Click="cmTaskBarShow_Click"/>
+                    <MenuItem x:Name="cmQuit" Header="Quit" Click="cmQuit_Click"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
         <TabControl TabStripPlacement="Left" Margin="10">
             <TabItem Header="This PC">
                 <Grid>
