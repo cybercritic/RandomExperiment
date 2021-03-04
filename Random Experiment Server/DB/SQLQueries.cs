@@ -10,6 +10,7 @@ namespace Random_Experiment_Server.DB
     public class SQLData
     {
         public string User { get; set; }
+        public int TimeZone { get; set; }
         public DateTime Time { get; set; }
         public int Count { get; set; }
         public double Mean { get; set; }
@@ -62,11 +63,16 @@ namespace Random_Experiment_Server.DB
         {
             int result = 0;
 
-            string cmdStr = "SELECT COUNT(*) AS count FROM Institutions " +
-                            "WHERE LOWER(slug) = @slug ;";
+            string cmdStr = "SELECT COUNT(*) AS count FROM data " +
+                            "WHERE LOWER(user) = @user AND time = @time AND (mean = @mean OR median = @median OR std_dev = @std_dev OR count = @count) ;";
 
             SqlCommand command = new SqlCommand(cmdStr, SQLraw);
-            command.Parameters.AddWithValue("@slug", slug);
+            command.Parameters.AddWithValue("@user", data.User);
+            command.Parameters.AddWithValue("@time", data.Time);
+            command.Parameters.AddWithValue("@mean", data.Mean);
+            command.Parameters.AddWithValue("@median", data.Median);
+            command.Parameters.AddWithValue("@std_dev", data.StdDev);
+            command.Parameters.AddWithValue("@count", data.Count);
 
             SqlDataReader reader = null;
             try
@@ -92,34 +98,81 @@ namespace Random_Experiment_Server.DB
         #region Insert
         private string InsertData(SQLData data)
         {
-            string cmdStr = " INSERT INTO Institutions (slug,name,max_days,updated_at,searchVal)" +
-                            " VALUES (@slug , @name , @max_days, @updated_at, @searchVal);";
+            string cmdStr = " INSERT INTO data (user,time_zone,time,count,mean,median,std_dev)" +
+                            " VALUES (@user , @time_zone, @time , @count, @mean, @median, @std_dev);";
 
             SqlCommand command = new SqlCommand(cmdStr, SQLraw);
-            //command.Parameters.AddWithValue("@slug", institution.Slug);
-            //command.Parameters.AddWithValue("@name", institution.Name);
-            //command.Parameters.AddWithValue("@max_days", institution.MaxDays);
-            //command.Parameters.AddWithValue("@updated_at", institution.UpdatedAt);
-            //command.Parameters.AddWithValue("@searchVal", institution.SearchValue);
+            command.Parameters.AddWithValue("@user", data.User);
+            command.Parameters.AddWithValue("@time_zone", data.TimeZone); 
+            command.Parameters.AddWithValue("@time", data.Time);
+            command.Parameters.AddWithValue("@count", data.Count);
+            command.Parameters.AddWithValue("@mean", data.Mean);
+            command.Parameters.AddWithValue("@median", data.Median);
+            command.Parameters.AddWithValue("@std_dev", data.StdDev);
 
             try { command.ExecuteNonQuery(); }
             catch (Exception e)
             {
                 Supporting.WriteLog(e.Message);
-                return "error adding institution";
+                return "error: adding data";
             }
 
-            return "info: created institution";
+            return "info: added data";
         }
 
         #region GetList
-        public List<SQLData> GetDataList()
+        public List<SQLData> GetDataListUser(string user, int days)
         {
             List<SQLData> result = new List<SQLData>();
 
-            string cmdStr = " SELECT * FROM Institutions; ";
+            string cmdStr = " SELECT * FROM data " +
+                            " WHERE user = @user AND time > @start_time";
+
+            DateTime start_time = DateTime.UtcNow.AddDays(-days);
 
             SqlCommand command = new SqlCommand(cmdStr, SQLraw);
+            command.Parameters.AddWithValue("@user", user);
+            command.Parameters.AddWithValue("@start_time", start_time);
+            
+            SqlDataReader reader = null;
+            try
+            {
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    SQLData current = new SQLData();
+
+                    current.User = Convert.ToString(reader["user"]);
+                    current.TimeZone = Convert.ToInt32(reader["time_zone"]);
+                    current.Time = Convert.ToDateTime(reader["time"]);
+                    current.Count = Convert.ToInt32(reader["count"]);
+                    current.Mean = Convert.ToDouble(reader["mean"]);
+                    current.Median = Convert.ToDouble(reader["median"]);
+                    current.StdDev = Convert.ToDouble(reader["std_dev"]);
+                    result.Add(current);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+                Supporting.WriteLog(e.Message);
+            }
+
+            return result;
+        }
+
+        public List<SQLData> GetDataListTimeZone(int zone, int days)
+        {
+            List<SQLData> result = new List<SQLData>();
+
+            string cmdStr = " SELECT * FROM data " +
+                            " WHERE time_zone = @zone AND time > @start_time";
+
+            DateTime start_time = DateTime.UtcNow.AddDays(-days);
+
+            SqlCommand command = new SqlCommand(cmdStr, SQLraw);
+            command.Parameters.AddWithValue("@zone", zone);
+            command.Parameters.AddWithValue("@start_time", start_time);
 
             SqlDataReader reader = null;
             try
@@ -129,12 +182,13 @@ namespace Random_Experiment_Server.DB
                 {
                     SQLData current = new SQLData();
 
-                    //current.Id = Convert.ToInt64(reader["id"]);
-                    //current.Slug = Convert.ToString(reader["slug"]);
-                    //current.Name = Convert.ToString(reader["name"]);
-                    //current.MaxDays = Convert.ToInt64(reader["max_days"]);
-                    //current.UpdatedAt = Convert.ToDateTime(reader["updated_at"]);
-                    //current.SearchValue = Convert.ToString(reader["searchVal"]);
+                    current.User = Convert.ToString(reader["user"]);
+                    current.TimeZone = Convert.ToInt32(reader["time_zone"]);
+                    current.Time = Convert.ToDateTime(reader["time"]);
+                    current.Count = Convert.ToInt32(reader["count"]);
+                    current.Mean = Convert.ToDouble(reader["mean"]);
+                    current.Median = Convert.ToDouble(reader["median"]);
+                    current.StdDev = Convert.ToDouble(reader["std_dev"]);
                     result.Add(current);
                 }
                 reader.Close();
