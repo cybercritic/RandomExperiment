@@ -8,9 +8,9 @@
         xmlns:local="clr-namespace:Random_Experiment_WPF"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="838.011" StateChanged="MetroWindow_StateChanged">
+        Title="MainWindow" Height="450" Width="838.011" StateChanged="MetroWindow_StateChanged" Closing="MetroWindow_Closing">
     <Grid Margin="10,10,10,10" >
-        <tb:TaskbarIcon IconSource="Resources/random_experiment.ico" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown">
+        <tb:TaskbarIcon x:Name="tbiTaskBar" IconSource="Resources/random_experiment.ico" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu Background="WhiteSmoke">
                     <MenuItem x:Name="cmTaskBarShow" Header="Show" Click="cmTaskBarShow_Click"/>
@@ -25,19 +25,29 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <GroupBox Header="Details" Margin="10,10,10,173" Grid.ColumnSpan="2">
+                    <GroupBox Header="Details" Margin="10,10,10,188" Grid.ColumnSpan="2">
                         <Grid>
                             <Label Content="Time Zone:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="131"/>
                             <Label Content="My ID:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="131"/>
                             <Label x:Name="lbTimeZone" Content="(UTC+0)" Margin="146,10,10,0" VerticalAlignment="Top"/>
-                            <Label x:Name="lbID" Content="AAABBBCCC" Margin="146,41,10,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="lbID" Text="AAABBBCCC" IsReadOnly="True" Margin="146,41,10,0" VerticalAlignment="Top"/>
+                            <Label Content="Last submit:" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="131"/>
+                            <Label x:Name="lbLastSubmit" Content="[date/time]" Margin="146,72,10,0" VerticalAlignment="Top"/>
+                            <Label Content="Run at startup:" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Width="131"/>
+                            <CheckBox x:Name="cbStartup" Margin="146,107,10,0" Height="22" VerticalAlignment="Top" Checked="cbStartup_Checked" Unchecked="cbStartup_Unchecked"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
             </TabItem>
             <TabItem Header="Global">
                 <Grid>
-                    <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy">
+                    <ComboBox SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140">
+                        <Label Content="Pick timezone"/>
+                    </ComboBox>
+                    <ComboBox SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,0,145,0">
+                        <Label Content="Pick date range"/>
+                    </ComboBox>
+                    <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="0,31,0,0">
                         <lvc:CartesianChart.AxisY>
                             <lvc:Axis Title="Sales" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
                         </lvc:CartesianChart.AxisY>

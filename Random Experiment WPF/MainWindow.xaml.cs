@@ -32,6 +32,8 @@ namespace Random_Experiment_WPF
         public Func<double, string> YFormatter { get; set; }
         public Random myRandom = new Random(Math.Abs((int)DateTime.Now.Ticks));
         public Info myUser { get; set; }
+        private Thread computeThread { get; set; }
+        private bool StopThread = false;
 
         public struct Info 
         { 
@@ -60,7 +62,7 @@ namespace Random_Experiment_WPF
             string idRaw = macAddr + "_5.some_stuff_8899211";
             string idSHA = SHA.GetSHAString(SHA.GetHash(idRaw));
 
-            this.lbID.Content = idSHA;
+            this.lbID.Text = idSHA;
 
             this.myUser = new Info() { user = idSHA, time_zone = currentOffset.Hours };
 
@@ -69,12 +71,21 @@ namespace Random_Experiment_WPF
             for (int i = 0; i < rndOffset; i++)
                 this.myRandom.Next(rndBase);
 
-            Thread computeThread = new Thread(this.Compute);
+            this.computeThread = new Thread(this.Compute);
             computeThread.Start(null);
 
             Console.WriteLine(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            this.SetStartup(false);
+            bool startup = Properties.Settings.Default.startup;
+            if (!startup)
+                if (MessageBox.Show("This program should run at startup, would yoou like to enable this?", "Run at start", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    startup = true;
+            
+            if(this.SetStartup(startup))
+                this.cbStartup.IsChecked = startup;
+
+            Properties.Settings.Default.startup = startup;
+            Properties.Settings.Default.Save();
         }
 
         private bool SetStartup(bool onOff)
@@ -97,7 +108,6 @@ namespace Random_Experiment_WPF
                 return false;
             }
         }
-
         private void Compute(object data)
         {
             Stopwatch time = new Stopwatch();
@@ -108,10 +118,20 @@ namespace Random_Experiment_WPF
 
             while(true)
             {
+                for (int i = 0; i < DateTime.Now.Ticks % 256; i++)
+                    this.myRandom.NextDouble();
+
                 float primary = (float)this.myRandom.NextDouble();
                 values.Add(primary);
                 
                 Thread.Sleep(100);
+
+                if(this.StopThread)
+                {
+                    this.StopThread = false;
+                    return;
+                }
+
                 if (time.Elapsed.Minutes >= 5)
                 {
                     List<double> submit = new List<double>(values);
@@ -121,7 +141,6 @@ namespace Random_Experiment_WPF
                 }
             }
         }
-
         private void SubmitData(List<double> values)
         {
             values.Sort();
@@ -142,7 +161,15 @@ namespace Random_Experiment_WPF
         private void MetroWindow_StateChanged(object sender, EventArgs e)
         {
             if (this.WindowState == WindowState.Minimized)
+            {
                 this.ShowInTaskbar = false;
+                if(Properties.Settings.Default.first)
+                {
+                    this.tbiTaskBar.ShowBalloonTip("Still running.", "The program is still running in the background.", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+                    Properties.Settings.Default.first = false;
+                    Properties.Settings.Default.Save();
+                }
+            }
             else
                 this.ShowInTaskbar = true;
         }
@@ -164,11 +191,15 @@ namespace Random_Experiment_WPF
         }
         private void cmQuit_Click(object sender, RoutedEventArgs e)
         {
+            this.StopThread = true;
+            while (!this.StopThread)
+                Thread.Sleep(100);
+
             this.Close();
         }
         public void PopulateGraph()
         {
-         
+
             SeriesCollection = new SeriesCollection
             {
                 new LineSeries
@@ -209,6 +240,29 @@ namespace Random_Experiment_WPF
             //SeriesCollection[3].Values.Add(5d);
 
             DataContext = this;
+        }
+        private void cbStartup_Checked(object sender, RoutedEventArgs e)
+        {
+            if (this.SetStartup(true))
+            {
+                Properties.Settings.Default.startup = true;
+                Properties.Settings.Default.Save();
+            }
+        }
+        private void cbStartup_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (this.SetStartup(false))
+            {
+                Properties.Settings.Default.startup = false;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.StopThread = true;
+            while (!this.StopThread)
+                Thread.Sleep(100);
         }
     }
 }
