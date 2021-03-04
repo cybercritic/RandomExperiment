@@ -70,12 +70,16 @@ namespace Random_Experiment_Server.WCF
             ServerMain.Instance.Sessions.RemoveAll(p => p.IP == ip || p.Token == token);
 
             if (DateTime.UtcNow.Ticks - current.Time.Ticks < 0 || DateTime.UtcNow - current.Time > new TimeSpan(0, 5, 0))
-                return "error:invalid token";
+                return "error:green";
 
-            Supporting.WriteLog($"[{ip}][{data.User}]:Added data");
+            if (DateTime.UtcNow.Ticks - data.Time.Ticks < 0 || DateTime.UtcNow - data.Time > new TimeSpan(0, 2, 0))
+                return "error:green";
 
+            if (ServerMain.Instance.mySQL.AddData(data).IndexOf("error") == -1)
+                return "error:SQL failed";
 
-
+            Supporting.WriteLog($"[{ip}][{data.User}]:Added data[{data.Mean.ToString("N4")}][{data.Median.ToString("N4")}][{data.StdDev.ToString("N4")}]");
+            
             return "success";
         }
 

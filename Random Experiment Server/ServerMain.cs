@@ -1,4 +1,5 @@
-﻿using Random_Experiment_Server.WCF;
+﻿using Random_Experiment_Server.DB;
+using Random_Experiment_Server.WCF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Random_Experiment_Server
     public class ServerMain
     {
         public static ServerMain Instance;
+        public SQLQueries mySQL { get; set; }
         public static List<Tuple<string, DateTime>> DDOSlist = new List<Tuple<string, DateTime>>();
         public Random myRandom = new Random((int)DateTime.UtcNow.Ticks % int.MaxValue);
         public List<AuthenticatedToken> Sessions { get; set; }
@@ -22,6 +24,7 @@ namespace Random_Experiment_Server
                 return;
 
             this.Sessions = new List<AuthenticatedToken>();
+            this.mySQL = new SQLQueries();
         }
 
         public static bool CheckDDOS(string ip)
