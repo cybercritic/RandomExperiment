@@ -53,6 +53,12 @@ namespace Random_Experiment_Server.WCF
             if (CheckDDOS(ip)) return null;
 
             string sessionToken = Convert.ToBase64String(this.MakeRandomSecret());
+            DateTime now = DateTime.UtcNow;
+            TimeSpan cut = new TimeSpan(0, 2, 0);
+            if (ServerMain.Instance.Sessions.Exists(p => p.IP == ip && (now - p.Time < cut)))
+                return "error:green";
+
+            ServerMain.Instance.Sessions.RemoveAll(p => p.IP == ip);
             this.AddToken(new AuthenticatedToken() { IP = ip, Token = sessionToken, Time = DateTime.UtcNow });
 
             return sessionToken;
@@ -67,9 +73,9 @@ namespace Random_Experiment_Server.WCF
                 return "error:no token";
 
             AuthenticatedToken current = ServerMain.Instance.Sessions.Find(p => p.Token == token);
-            ServerMain.Instance.Sessions.RemoveAll(p => p.IP == ip || p.Token == token);
+            ServerMain.Instance.Sessions.RemoveAll(p => p.IP == ip);
 
-            if (DateTime.UtcNow.Ticks - current.Time.Ticks < 0 || DateTime.UtcNow - current.Time > new TimeSpan(0, 5, 0))
+            if (DateTime.UtcNow.Ticks - current.Time.Ticks < 0 || DateTime.UtcNow - current.Time > new TimeSpan(0, 2, 0))
                 return "error:green";
 
             if (DateTime.UtcNow.Ticks - data.Time.Ticks < 0 || DateTime.UtcNow - data.Time > new TimeSpan(0, 2, 0))

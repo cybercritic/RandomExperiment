@@ -116,8 +116,12 @@ namespace Random_Experiment_WPF
             double s0 = 0, s1 = 0, s2 = 0;
             List<double> values = new List<double>();
 
+            long last_tick = 0;
             while(true)
             {
+                //long tick = DateTime.UtcNow.Ticks;
+                //Console.WriteLine($"{tick - last_tick}|{tick}");
+                //last_tick = tick;
                 for (int i = 0; i < DateTime.Now.Ticks % 256; i++)
                     this.myRandom.NextDouble();
 

@@ -18,24 +18,23 @@ namespace Random_Experiment_Server
 
             Uri baseAddress = new Uri("http://127.0.0.1:3030");
 
-            //create standard servicehost
-            ServiceHost serviceHost = new ServiceHost(typeof(IRandomServer), baseAddress);
+            ServiceHost serviceHost = new ServiceHost(typeof(RandomServer), baseAddress);
 
-            BasicHttpBinding binding = new BasicHttpBinding();
-            binding.OpenTimeout = new TimeSpan(1, 0, 5);
-            binding.CloseTimeout = new TimeSpan(1, 0, 5);
-            binding.SendTimeout = new TimeSpan(1, 0, 5);
-            binding.ReceiveTimeout = new TimeSpan(1, 0, 5);
-
+            WSHttpBinding binding = new WSHttpBinding();
+            binding.OpenTimeout = new TimeSpan(0, 5, 0);
+            binding.CloseTimeout = new TimeSpan(0, 5, 0);
+            binding.SendTimeout = new TimeSpan(0, 5, 0);
+            binding.ReceiveTimeout = new TimeSpan(0, 5, 0);
+            binding.MaxBufferPoolSize = 200000;
+            binding.MaxReceivedMessageSize = 200000;
+            binding.ReaderQuotas.MaxArrayLength = 20000;
+            binding.ReaderQuotas.MaxStringContentLength = 20000;
+            
             ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
-            smb.HttpGetEnabled = false;//put this to false at some point
-            smb.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
+            //smb.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
             serviceHost.Description.Behaviors.Add(smb);
 
             serviceHost.AddServiceEndpoint(typeof(IRandomServer), binding, baseAddress);
-            ServiceEndpoint tst = serviceHost.AddServiceEndpoint(typeof(IRandomServer), new WebHttpBinding(), "get");
-            tst.EndpointBehaviors.Add(new WebHttpBehavior());
-
             serviceHost.CloseTimeout = new TimeSpan(1, 0, 5);
             serviceHost.OpenTimeout = new TimeSpan(1, 0, 5);
 
