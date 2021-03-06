@@ -119,6 +119,8 @@ namespace Random_Experiment_WPF
             long last_tick = 0;
             while(true)
             {
+                //Console.WriteLine(GetLastUserInput.GetIdleTickCount());
+
                 //long tick = DateTime.UtcNow.Ticks;
                 //Console.WriteLine($"{tick - last_tick}|{tick}");
                 //last_tick = tick;
@@ -161,6 +163,8 @@ namespace Random_Experiment_WPF
             double sum_of_squares = squares_query.Sum();
 
             double std_dev = Math.Sqrt(sum_of_squares / values.Count());
+
+            bool idle = GetLastUserInput.GetIdleTickCount() < 1000 * 60 * 5;
         }
         private void MetroWindow_StateChanged(object sender, EventArgs e)
         {

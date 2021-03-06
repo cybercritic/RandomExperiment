@@ -12,6 +12,7 @@ namespace Random_Experiment_Server.DB
         public string User { get; set; }
         public int TimeZone { get; set; }
         public DateTime Time { get; set; }
+        public bool Active { get; set; }
         public int Count { get; set; }
         public double Mean { get; set; }
         public double Median { get; set; }
@@ -98,13 +99,14 @@ namespace Random_Experiment_Server.DB
         #region Insert
         private string InsertData(SQLData data)
         {
-            string cmdStr = " INSERT INTO data (user,time_zone,time,count,mean,median,std_dev)" +
+            string cmdStr = " INSERT INTO data (user,time_zone,time,active,count,mean,median,std_dev)" +
                             " VALUES (@user , @time_zone, @time , @count, @mean, @median, @std_dev);";
 
             SqlCommand command = new SqlCommand(cmdStr, SQLraw);
             command.Parameters.AddWithValue("@user", data.User);
             command.Parameters.AddWithValue("@time_zone", data.TimeZone); 
             command.Parameters.AddWithValue("@time", data.Time);
+            command.Parameters.AddWithValue("@active", data.Active);
             command.Parameters.AddWithValue("@count", data.Count);
             command.Parameters.AddWithValue("@mean", data.Mean);
             command.Parameters.AddWithValue("@median", data.Median);
@@ -146,6 +148,7 @@ namespace Random_Experiment_Server.DB
                     current.User = Convert.ToString(reader["user"]);
                     current.TimeZone = Convert.ToInt32(reader["time_zone"]);
                     current.Time = Convert.ToDateTime(reader["time"]);
+                    current.Active = Convert.ToBoolean(reader["active"]);
                     current.Count = Convert.ToInt32(reader["count"]);
                     current.Mean = Convert.ToDouble(reader["mean"]);
                     current.Median = Convert.ToDouble(reader["median"]);
@@ -186,6 +189,7 @@ namespace Random_Experiment_Server.DB
                     current.User = Convert.ToString(reader["user"]);
                     current.TimeZone = Convert.ToInt32(reader["time_zone"]);
                     current.Time = Convert.ToDateTime(reader["time"]);
+                    current.Active = Convert.ToBoolean(reader["active"]);
                     current.Count = Convert.ToInt32(reader["count"]);
                     current.Mean = Convert.ToDouble(reader["mean"]);
                     current.Median = Convert.ToDouble(reader["median"]);
