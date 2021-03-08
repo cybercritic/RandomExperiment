@@ -16,5 +16,11 @@ namespace Random_Experiment_Server.WCF
 
         [OperationContract]
         string SubmitStatus(string token, SQLData data);
+
+        [OperationContract]
+        List<SQLData> GetUserData(string userID, int days);
+
+        [OperationContract]
+        List<SQLData> GetTimeZoneData(int timeZone, int days);
     }
 }

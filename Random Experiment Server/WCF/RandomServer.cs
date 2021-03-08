@@ -107,5 +107,25 @@ namespace Random_Experiment_Server.WCF
 
             return secret;
         }
+
+        public List<SQLData> GetUserData(string userID, int days)
+        {
+            if (CheckDDOS(GetIP())) return null;
+
+            if (days > 60 || days <= 0)
+                return null;
+
+            return ServerMain.Instance.mySQL.GetDataListUser(userID, days);
+        }
+
+        public List<SQLData> GetTimeZoneData(int timeZone, int days)
+        {
+            if (CheckDDOS(GetIP())) return null;
+
+            if (days > 60 || days <= 0)
+                return null;
+
+            return ServerMain.Instance.mySQL.GetDataListTimeZone(timeZone, days);
+        }
     }
 }
