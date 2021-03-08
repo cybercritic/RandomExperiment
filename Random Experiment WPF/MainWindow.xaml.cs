@@ -19,6 +19,8 @@ using LiveCharts.Wpf;
 using MahApps.Metro.Controls;
 using System.Diagnostics;
 using Microsoft.Win32;
+using Random_Experiment_WPF.RandomExperimentService;
+using System.ServiceModel;
 
 namespace Random_Experiment_WPF
 {
@@ -34,7 +36,8 @@ namespace Random_Experiment_WPF
         public Info myUser { get; set; }
         private Thread computeThread { get; set; }
         private bool StopThread = false;
-
+        private RandomServerClient myService;
+     
         public struct Info 
         { 
             public string user { get; set; }
@@ -86,6 +89,9 @@ namespace Random_Experiment_WPF
 
             Properties.Settings.Default.startup = startup;
             Properties.Settings.Default.Save();
+
+            myService = new RandomServerClient();
+            myService.Endpoint.Address = new EndpointAddress(string.Format("http://{0}:3030", "127.0.0.1"));//server.pypem.com//127.0.0.1
         }
 
         private bool SetStartup(bool onOff)
@@ -108,6 +114,7 @@ namespace Random_Experiment_WPF
                 return false;
             }
         }
+        bool test = true;
         private void Compute(object data)
         {
             Stopwatch time = new Stopwatch();
@@ -138,13 +145,15 @@ namespace Random_Experiment_WPF
                     return;
                 }
 
-                if (time.Elapsed.Minutes >= 5)
+                //if (time.Elapsed.Minutes >= 2)
                 {
                     List<double> submit = new List<double>(values);
                     Dispatcher.Invoke(() => this.SubmitData(submit));
                     values.Clear();
                     time.Restart();
                 }
+
+                if (test) return;
             }
         }
         private void SubmitData(List<double> values)
@@ -165,6 +174,52 @@ namespace Random_Experiment_WPF
             double std_dev = Math.Sqrt(sum_of_squares / values.Count());
 
             bool idle = GetLastUserInput.GetIdleTickCount() < 1000 * 60 * 5;
+
+            SQLData submitData = new SQLData();
+            submitData.Mean = mean;
+            submitData.Median = median;
+            submitData.StdDev = std_dev;
+            submitData.Active = idle;
+            submitData.Count = values.Count;
+            submitData.Time = DateTime.UtcNow;
+            submitData.TimeZone = this.myUser.time_zone;
+            submitData.User = this.myUser.user;
+
+            this.prBusy.IsActive = true;
+            this.IsEnabled = false;
+
+            this.lbLastSubmit.Content = DateTime.Now.ToString("HH:mm dd:MM:YYYY");
+
+            this.myService.BeginGetToken(new AsyncCallback(GetTokenCallBack), submitData);
+        }
+        private void GetTokenCallBack(IAsyncResult result)
+        {
+            try
+            {
+                string token = this.myService.EndGetToken(result).ToString();
+
+                this.myService.BeginSubmitStatus(token, result.AsyncState as SQLData, this.GetSubmitCallBack, null);
+            }
+            catch
+            {
+                Dispatcher.Invoke(() => this.lbLastSubmit.Content = "[error]");
+                Dispatcher.Invoke(() => this.prBusy.IsActive = false);
+                Dispatcher.Invoke(() => this.IsEnabled = true);
+            }
+        }
+        private void GetSubmitCallBack(IAsyncResult result)
+        {
+            try
+            {
+                if(this.myService.EndSubmitStatus(result).ToString().IndexOf("error") != -1)
+                    Dispatcher.Invoke(() => this.lbLastSubmit.Content = "[error]");
+            }
+            catch
+            {
+                Dispatcher.Invoke(() => this.lbLastSubmit.Content = "[error]");
+            }
+            Dispatcher.Invoke(() => this.prBusy.IsActive = false);
+            Dispatcher.Invoke(() => this.IsEnabled = true);
         }
         private void MetroWindow_StateChanged(object sender, EventArgs e)
         {

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Random_Experiment_Server.DB" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Random_Experiment_Server.DB" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="SQLData">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Active" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Count" type="xs:int" />
+      <xs:element minOccurs="0" name="Mean" type="xs:double" />
+      <xs:element minOccurs="0" name="Median" type="xs:double" />
+      <xs:element minOccurs="0" name="StdDev" type="xs:double" />
+      <xs:element minOccurs="0" name="Time" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="TimeZone" type="xs:int" />
+      <xs:element minOccurs="0" name="User" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SQLData" nillable="true" type="tns:SQLData" />
+</xs:schema>

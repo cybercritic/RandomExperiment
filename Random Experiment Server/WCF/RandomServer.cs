@@ -81,10 +81,10 @@ namespace Random_Experiment_Server.WCF
             if (DateTime.UtcNow.Ticks - data.Time.Ticks < 0 || DateTime.UtcNow - data.Time > new TimeSpan(0, 2, 0))
                 return "error:green";
 
-            if (ServerMain.Instance.mySQL.AddData(data).IndexOf("error") == -1)
+            if (ServerMain.Instance.mySQL.AddData(data).IndexOf("error") != -1)
                 return "error:SQL failed";
 
-            Supporting.WriteLog($"[{ip}][{data.User}]:Added data[{data.Mean.ToString("N4")}][{data.Median.ToString("N4")}][{data.StdDev.ToString("N4")}]");
+            Supporting.WriteLog($"[{ip}][{data.User}]:Added data[{data.Mean.ToString("N4")}][{data.Median.ToString("N4")}][{data.StdDev.ToString("N4")}][{data.Active}][{data.Count}]");
             
             return "success";
         }

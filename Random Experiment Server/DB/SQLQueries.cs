@@ -65,7 +65,7 @@ namespace Random_Experiment_Server.DB
             int result = 0;
 
             string cmdStr = "SELECT COUNT(*) AS count FROM data " +
-                            "WHERE LOWER(user) = @user AND time = @time AND (mean = @mean OR median = @median OR std_dev = @std_dev OR count = @count) ;";
+                            "WHERE LOWER(user_id) = @user AND time = @time AND (mean = @mean OR median = @median OR std_dev = @std_dev OR count = @count) ;";
 
             SqlCommand command = new SqlCommand(cmdStr, SQLraw);
             command.Parameters.AddWithValue("@user", data.User);
@@ -99,8 +99,8 @@ namespace Random_Experiment_Server.DB
         #region Insert
         private string InsertData(SQLData data)
         {
-            string cmdStr = " INSERT INTO data (user,time_zone,time,active,count,mean,median,std_dev)" +
-                            " VALUES (@user , @time_zone, @time , @count, @mean, @median, @std_dev);";
+            string cmdStr = " INSERT INTO data (user_id, time_zone, time, active, count, mean, median, std_dev) " +
+                            " VALUES (@user , @time_zone, @time , @active, @count, @mean, @median, @std_dev);";
 
             SqlCommand command = new SqlCommand(cmdStr, SQLraw);
             command.Parameters.AddWithValue("@user", data.User);
@@ -129,7 +129,7 @@ namespace Random_Experiment_Server.DB
             List<SQLData> result = new List<SQLData>();
 
             string cmdStr = " SELECT * FROM data " +
-                            " WHERE user = @user AND time > @start_time";
+                            " WHERE user_id = @user AND time > @start_time";
 
             DateTime start_time = DateTime.UtcNow.AddDays(-days);
 

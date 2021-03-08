@@ -31,7 +31,8 @@ namespace Random_Experiment_Server
             binding.ReaderQuotas.MaxStringContentLength = 20000;
             
             ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
-            //smb.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
+            smb.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
+            smb.HttpGetEnabled = true;
             serviceHost.Description.Behaviors.Add(smb);
 
             serviceHost.AddServiceEndpoint(typeof(IRandomServer), binding, baseAddress);
