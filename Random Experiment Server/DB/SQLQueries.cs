@@ -124,14 +124,14 @@ namespace Random_Experiment_Server.DB
         #endregion
 
         #region GetList
-        public List<SQLData> GetDataListUser(string user, int days)
+        public List<SQLData> GetDataListUser(string user, TimeSpan time)
         {
             List<SQLData> result = new List<SQLData>();
 
             string cmdStr = " SELECT * FROM data " +
                             " WHERE user_id = @user AND time > @start_time";
 
-            DateTime start_time = DateTime.UtcNow.AddDays(-days);
+            DateTime start_time = DateTime.UtcNow - time;
 
             SqlCommand command = new SqlCommand(cmdStr, SQLraw);
             command.Parameters.AddWithValue("@user", user);
@@ -165,14 +165,14 @@ namespace Random_Experiment_Server.DB
             return result;
         }
 
-        public List<SQLData> GetDataListTimeZone(int zone, int days)
+        public List<SQLData> GetDataListTimeZone(int zone, TimeSpan time)
         {
             List<SQLData> result = new List<SQLData>();
 
             string cmdStr = " SELECT * FROM data " +
                             " WHERE time_zone = @zone AND time > @start_time";
 
-            DateTime start_time = DateTime.UtcNow.AddDays(-days);
+            DateTime start_time = DateTime.UtcNow - time;
 
             SqlCommand command = new SqlCommand(cmdStr, SQLraw);
             command.Parameters.AddWithValue("@zone", zone);

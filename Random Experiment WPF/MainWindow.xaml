@@ -38,6 +38,9 @@
                             <CheckBox x:Name="cbStartup" Margin="146,107,479,0" Height="22" VerticalAlignment="Top" Checked="cbStartup_Checked" Unchecked="cbStartup_Unchecked"/>
                             <ComboBox SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,104,10,0">
                                 <Label Content="Pick date range"/>
+                                <Label Content="24 hours"/>
+                                <Label Content="7 days"/>
+                                <Label Content="2 weeks"/>
                             </ComboBox>
                         </Grid>
                     </GroupBox>
@@ -57,7 +60,9 @@
                         <Label Content="Pick timezone"/>
                     </ComboBox>
                     <ComboBox SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,0,145,0">
-                        <Label Content="Pick date range"/>
+                        <Label Content="24 hours"/>
+                        <Label Content="7 days"/>
+                        <Label Content="2 weeks"/>
                     </ComboBox>
                     <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="0,31,0,0">
                         <lvc:CartesianChart.AxisY>

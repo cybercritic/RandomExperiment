@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://127.0.0.1:3030/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Random_Experiment_Server.DB" />
+  <xs:import schemaLocation="http://127.0.0.1:3030/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:element name="GetToken">
     <xs:complexType>
       <xs:sequence />
@@ -25,6 +26,36 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="SubmitStatusResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="userID" nillable="true" type="xs:string" />
+        <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="time" type="q2:duration" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserDataResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Random_Experiment_Server.DB" minOccurs="0" name="GetUserDataResult" nillable="true" type="q3:ArrayOfSQLData" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTimeZoneData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="timeZone" type="xs:int" />
+        <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="time" type="q4:duration" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTimeZoneDataResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Random_Experiment_Server.DB" minOccurs="0" name="GetTimeZoneDataResult" nillable="true" type="q5:ArrayOfSQLData" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

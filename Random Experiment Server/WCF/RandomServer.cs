@@ -75,6 +75,9 @@ namespace Random_Experiment_Server.WCF
             AuthenticatedToken current = ServerMain.Instance.Sessions.Find(p => p.Token == token);
             ServerMain.Instance.Sessions.RemoveAll(p => p.IP == ip);
 
+            if (data.Count < 2000)
+                return "error:green";
+
             if (DateTime.UtcNow.Ticks - current.Time.Ticks < 0 || DateTime.UtcNow - current.Time > new TimeSpan(0, 2, 0))
                 return "error:green";
 
@@ -84,7 +87,7 @@ namespace Random_Experiment_Server.WCF
             if (ServerMain.Instance.mySQL.AddData(data).IndexOf("error") != -1)
                 return "error:SQL failed";
 
-            Supporting.WriteLog($"[{ip}][{data.User}]:Added data[{data.Mean.ToString("N4")}][{data.Median.ToString("N4")}][{data.StdDev.ToString("N4")}][{data.Active}][{data.Count}]");
+            Supporting.WriteLog($"[{ip}][{data.User.Substring(0,8)}]:Added data[{data.Mean.ToString("N4")}][{data.Median.ToString("N4")}][{data.StdDev.ToString("N4")}][{data.Active}][{data.Count}]");
             
             return "success";
         }
@@ -108,24 +111,53 @@ namespace Random_Experiment_Server.WCF
             return secret;
         }
 
-        public List<SQLData> GetUserData(string userID, int days)
+        public List<SQLData> GetUserData(string userID, TimeSpan time)
         {
             if (CheckDDOS(GetIP())) return null;
 
-            if (days > 60 || days <= 0)
+            if (time.TotalDays > 30 || time.Ticks <= 0)
                 return null;
 
-            return ServerMain.Instance.mySQL.GetDataListUser(userID, days);
+            return ServerMain.Instance.mySQL.GetDataListUser(userID, time);
         }
 
-        public List<SQLData> GetTimeZoneData(int timeZone, int days)
+        public List<SQLData> GetTimeZoneData(int timeZone, TimeSpan time)
         {
             if (CheckDDOS(GetIP())) return null;
 
-            if (days > 60 || days <= 0)
+            if (time.TotalDays > 30 || time.Ticks <= 0)
                 return null;
 
-            return ServerMain.Instance.mySQL.GetDataListTimeZone(timeZone, days);
+            List<SQLData> result = new List<SQLData>();
+
+            List<SQLData> rawData = ServerMain.Instance.mySQL.GetDataListTimeZone(timeZone, time);
+            for (int i = -(Convert.ToInt32(time.TotalMinutes) / 5); i <= 0; i += 5)
+            {
+                DateTime start = DateTime.UtcNow - TimeSpan.FromMinutes(i);
+                DateTime end = DateTime.UtcNow - TimeSpan.FromMinutes(i + 5);
+
+                double meanS = 0, medianS = 0, stdDevS = 0;
+                foreach(SQLData data in rawData)
+                {
+                    if (data.Time < start || data.Time > end)
+                        continue;
+
+                    meanS += data.Mean;
+                    medianS += data.Median;
+                    stdDevS += data.StdDev;
+                }
+
+                SQLData current = new SQLData();
+                current.Mean = meanS / (double)rawData.Count;
+                current.Median = medianS / (double)rawData.Count;
+                current.StdDev = stdDevS / (double)rawData.Count;
+                current.TimeZone = timeZone;
+                current.Time = end;
+
+                result.Add(current);
+            }
+
+            return result;
         }
     }
 }

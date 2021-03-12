@@ -19,6 +19,18 @@
   <wsdl:message name="IRandomServer_SubmitStatus_OutputMessage">
     <wsdl:part name="parameters" element="SubmitStatusResponse" />
   </wsdl:message>
+  <wsdl:message name="IRandomServer_GetUserData_InputMessage">
+    <wsdl:part name="parameters" element="GetUserData" />
+  </wsdl:message>
+  <wsdl:message name="IRandomServer_GetUserData_OutputMessage">
+    <wsdl:part name="parameters" element="GetUserDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="IRandomServer_GetTimeZoneData_InputMessage">
+    <wsdl:part name="parameters" element="GetTimeZoneData" />
+  </wsdl:message>
+  <wsdl:message name="IRandomServer_GetTimeZoneData_OutputMessage">
+    <wsdl:part name="parameters" element="GetTimeZoneDataResponse" />
+  </wsdl:message>
   <wsdl:portType name="IRandomServer">
     <wsdl:operation name="GetToken">
       <wsdl:input wsam:Action="urn:IRandomServer/GetToken" message="IRandomServer_GetToken_InputMessage" />
@@ -27,6 +39,14 @@
     <wsdl:operation name="SubmitStatus">
       <wsdl:input wsam:Action="urn:IRandomServer/SubmitStatus" message="IRandomServer_SubmitStatus_InputMessage" />
       <wsdl:output wsam:Action="urn:IRandomServer/SubmitStatusResponse" message="IRandomServer_SubmitStatus_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserData">
+      <wsdl:input wsam:Action="urn:IRandomServer/GetUserData" message="IRandomServer_GetUserData_InputMessage" />
+      <wsdl:output wsam:Action="urn:IRandomServer/GetUserDataResponse" message="IRandomServer_GetUserData_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeZoneData">
+      <wsdl:input wsam:Action="urn:IRandomServer/GetTimeZoneData" message="IRandomServer_GetTimeZoneData_InputMessage" />
+      <wsdl:output wsam:Action="urn:IRandomServer/GetTimeZoneDataResponse" message="IRandomServer_GetTimeZoneData_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>

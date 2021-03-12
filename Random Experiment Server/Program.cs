@@ -23,12 +23,12 @@ namespace Random_Experiment_Server
             WSHttpBinding binding = new WSHttpBinding();
             binding.OpenTimeout = new TimeSpan(0, 5, 0);
             binding.CloseTimeout = new TimeSpan(0, 5, 0);
-            binding.SendTimeout = new TimeSpan(0, 5, 0);
-            binding.ReceiveTimeout = new TimeSpan(0, 5, 0);
-            binding.MaxBufferPoolSize = 200000;
-            binding.MaxReceivedMessageSize = 200000;
-            binding.ReaderQuotas.MaxArrayLength = 20000;
-            binding.ReaderQuotas.MaxStringContentLength = 20000;
+            binding.SendTimeout = new TimeSpan(0, 10, 0);
+            binding.ReceiveTimeout = new TimeSpan(long.MaxValue);
+            binding.MaxBufferPoolSize = 1024 * 1024 * 10;
+            binding.MaxReceivedMessageSize = 1024 * 1024;
+            binding.ReaderQuotas.MaxArrayLength = 1000000;
+            binding.ReaderQuotas.MaxStringContentLength = 1000000;
             
             ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
             smb.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
@@ -36,9 +36,9 @@ namespace Random_Experiment_Server
             serviceHost.Description.Behaviors.Add(smb);
 
             serviceHost.AddServiceEndpoint(typeof(IRandomServer), binding, baseAddress);
-            serviceHost.CloseTimeout = new TimeSpan(1, 0, 5);
-            serviceHost.OpenTimeout = new TimeSpan(1, 0, 5);
-
+            serviceHost.CloseTimeout = new TimeSpan(long.MaxValue);
+            serviceHost.OpenTimeout = new TimeSpan(long.MaxValue);
+            
             serviceHost.Open();
 
             Console.WriteLine("The service is ready at {0}", baseAddress);

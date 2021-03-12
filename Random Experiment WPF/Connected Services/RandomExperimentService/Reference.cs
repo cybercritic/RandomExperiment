@@ -189,6 +189,22 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         System.IAsyncResult BeginSubmitStatus(string token, Random_Experiment_WPF.RandomExperimentService.SQLData data, System.AsyncCallback callback, object asyncState);
         
         string EndSubmitStatus(System.IAsyncResult result);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IRandomServer/GetUserData", ReplyAction="urn:IRandomServer/GetUserDataResponse")]
+        Random_Experiment_WPF.RandomExperimentService.SQLData[] GetUserData(string userID, System.TimeSpan time);
+        
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="urn:IRandomServer/GetUserData", ReplyAction="urn:IRandomServer/GetUserDataResponse")]
+        System.IAsyncResult BeginGetUserData(string userID, System.TimeSpan time, System.AsyncCallback callback, object asyncState);
+        
+        Random_Experiment_WPF.RandomExperimentService.SQLData[] EndGetUserData(System.IAsyncResult result);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IRandomServer/GetTimeZoneData", ReplyAction="urn:IRandomServer/GetTimeZoneDataResponse")]
+        Random_Experiment_WPF.RandomExperimentService.SQLData[] GetTimeZoneData(int timeZone, System.TimeSpan time);
+        
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="urn:IRandomServer/GetTimeZoneData", ReplyAction="urn:IRandomServer/GetTimeZoneDataResponse")]
+        System.IAsyncResult BeginGetTimeZoneData(int timeZone, System.TimeSpan time, System.AsyncCallback callback, object asyncState);
+        
+        Random_Experiment_WPF.RandomExperimentService.SQLData[] EndGetTimeZoneData(System.IAsyncResult result);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -235,6 +251,44 @@ namespace Random_Experiment_WPF.RandomExperimentService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public partial class GetUserDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        public GetUserDataCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        public Random_Experiment_WPF.RandomExperimentService.SQLData[] Result {
+            get {
+                base.RaiseExceptionIfNecessary();
+                return ((Random_Experiment_WPF.RandomExperimentService.SQLData[])(this.results[0]));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public partial class GetTimeZoneDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        public GetTimeZoneDataCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        public Random_Experiment_WPF.RandomExperimentService.SQLData[] Result {
+            get {
+                base.RaiseExceptionIfNecessary();
+                return ((Random_Experiment_WPF.RandomExperimentService.SQLData[])(this.results[0]));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class RandomServerClient : System.ServiceModel.ClientBase<Random_Experiment_WPF.RandomExperimentService.IRandomServer>, Random_Experiment_WPF.RandomExperimentService.IRandomServer {
         
         private BeginOperationDelegate onBeginGetTokenDelegate;
@@ -248,6 +302,18 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         private EndOperationDelegate onEndSubmitStatusDelegate;
         
         private System.Threading.SendOrPostCallback onSubmitStatusCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginGetUserDataDelegate;
+        
+        private EndOperationDelegate onEndGetUserDataDelegate;
+        
+        private System.Threading.SendOrPostCallback onGetUserDataCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginGetTimeZoneDataDelegate;
+        
+        private EndOperationDelegate onEndGetTimeZoneDataDelegate;
+        
+        private System.Threading.SendOrPostCallback onGetTimeZoneDataCompletedDelegate;
         
         public RandomServerClient() {
         }
@@ -271,6 +337,10 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         public event System.EventHandler<GetTokenCompletedEventArgs> GetTokenCompleted;
         
         public event System.EventHandler<SubmitStatusCompletedEventArgs> SubmitStatusCompleted;
+        
+        public event System.EventHandler<GetUserDataCompletedEventArgs> GetUserDataCompleted;
+        
+        public event System.EventHandler<GetTimeZoneDataCompletedEventArgs> GetTimeZoneDataCompleted;
         
         public string GetToken() {
             return base.Channel.GetToken();
@@ -370,6 +440,110 @@ namespace Random_Experiment_WPF.RandomExperimentService {
             base.InvokeAsync(this.onBeginSubmitStatusDelegate, new object[] {
                         token,
                         data}, this.onEndSubmitStatusDelegate, this.onSubmitStatusCompletedDelegate, userState);
+        }
+        
+        public Random_Experiment_WPF.RandomExperimentService.SQLData[] GetUserData(string userID, System.TimeSpan time) {
+            return base.Channel.GetUserData(userID, time);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginGetUserData(string userID, System.TimeSpan time, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginGetUserData(userID, time, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public Random_Experiment_WPF.RandomExperimentService.SQLData[] EndGetUserData(System.IAsyncResult result) {
+            return base.Channel.EndGetUserData(result);
+        }
+        
+        private System.IAsyncResult OnBeginGetUserData(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            string userID = ((string)(inValues[0]));
+            System.TimeSpan time = ((System.TimeSpan)(inValues[1]));
+            return this.BeginGetUserData(userID, time, callback, asyncState);
+        }
+        
+        private object[] OnEndGetUserData(System.IAsyncResult result) {
+            Random_Experiment_WPF.RandomExperimentService.SQLData[] retVal = this.EndGetUserData(result);
+            return new object[] {
+                    retVal};
+        }
+        
+        private void OnGetUserDataCompleted(object state) {
+            if ((this.GetUserDataCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.GetUserDataCompleted(this, new GetUserDataCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void GetUserDataAsync(string userID, System.TimeSpan time) {
+            this.GetUserDataAsync(userID, time, null);
+        }
+        
+        public void GetUserDataAsync(string userID, System.TimeSpan time, object userState) {
+            if ((this.onBeginGetUserDataDelegate == null)) {
+                this.onBeginGetUserDataDelegate = new BeginOperationDelegate(this.OnBeginGetUserData);
+            }
+            if ((this.onEndGetUserDataDelegate == null)) {
+                this.onEndGetUserDataDelegate = new EndOperationDelegate(this.OnEndGetUserData);
+            }
+            if ((this.onGetUserDataCompletedDelegate == null)) {
+                this.onGetUserDataCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetUserDataCompleted);
+            }
+            base.InvokeAsync(this.onBeginGetUserDataDelegate, new object[] {
+                        userID,
+                        time}, this.onEndGetUserDataDelegate, this.onGetUserDataCompletedDelegate, userState);
+        }
+        
+        public Random_Experiment_WPF.RandomExperimentService.SQLData[] GetTimeZoneData(int timeZone, System.TimeSpan time) {
+            return base.Channel.GetTimeZoneData(timeZone, time);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginGetTimeZoneData(int timeZone, System.TimeSpan time, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginGetTimeZoneData(timeZone, time, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public Random_Experiment_WPF.RandomExperimentService.SQLData[] EndGetTimeZoneData(System.IAsyncResult result) {
+            return base.Channel.EndGetTimeZoneData(result);
+        }
+        
+        private System.IAsyncResult OnBeginGetTimeZoneData(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            int timeZone = ((int)(inValues[0]));
+            System.TimeSpan time = ((System.TimeSpan)(inValues[1]));
+            return this.BeginGetTimeZoneData(timeZone, time, callback, asyncState);
+        }
+        
+        private object[] OnEndGetTimeZoneData(System.IAsyncResult result) {
+            Random_Experiment_WPF.RandomExperimentService.SQLData[] retVal = this.EndGetTimeZoneData(result);
+            return new object[] {
+                    retVal};
+        }
+        
+        private void OnGetTimeZoneDataCompleted(object state) {
+            if ((this.GetTimeZoneDataCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.GetTimeZoneDataCompleted(this, new GetTimeZoneDataCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void GetTimeZoneDataAsync(int timeZone, System.TimeSpan time) {
+            this.GetTimeZoneDataAsync(timeZone, time, null);
+        }
+        
+        public void GetTimeZoneDataAsync(int timeZone, System.TimeSpan time, object userState) {
+            if ((this.onBeginGetTimeZoneDataDelegate == null)) {
+                this.onBeginGetTimeZoneDataDelegate = new BeginOperationDelegate(this.OnBeginGetTimeZoneData);
+            }
+            if ((this.onEndGetTimeZoneDataDelegate == null)) {
+                this.onEndGetTimeZoneDataDelegate = new EndOperationDelegate(this.OnEndGetTimeZoneData);
+            }
+            if ((this.onGetTimeZoneDataCompletedDelegate == null)) {
+                this.onGetTimeZoneDataCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetTimeZoneDataCompleted);
+            }
+            base.InvokeAsync(this.onBeginGetTimeZoneDataDelegate, new object[] {
+                        timeZone,
+                        time}, this.onEndGetTimeZoneDataDelegate, this.onGetTimeZoneDataCompletedDelegate, userState);
         }
     }
 }

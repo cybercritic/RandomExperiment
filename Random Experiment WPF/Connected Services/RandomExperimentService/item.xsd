@@ -13,4 +13,10 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="SQLData" nillable="true" type="tns:SQLData" />
+  <xs:complexType name="ArrayOfSQLData">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SQLData" nillable="true" type="tns:SQLData" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSQLData" nillable="true" type="tns:ArrayOfSQLData" />
 </xs:schema>

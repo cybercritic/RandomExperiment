@@ -37,7 +37,9 @@ namespace Random_Experiment_WPF
         private Thread computeThread { get; set; }
         private bool StopThread = false;
         private RandomServerClient myService;
-     
+        private List<SQLData> myLocalData { get; set; }
+        private List<SQLData> myGlobalData { get; set; }
+
         public struct Info 
         { 
             public string user { get; set; }
@@ -92,6 +94,12 @@ namespace Random_Experiment_WPF
 
             myService = new RandomServerClient();
             myService.Endpoint.Address = new EndpointAddress(string.Format("http://{0}:3030", "127.0.0.1"));//server.pypem.com//127.0.0.1
+            myService.InnerChannel.OperationTimeout = new TimeSpan(0, 2, 30);
+            
+            this.myGlobalData = new List<SQLData>();
+            this.myLocalData = new List<SQLData>();
+
+            //this.myService.BeginGetUserData(this.myUser.user, 7, this.GetUserDataCallBack, null);
         }
 
         private bool SetStartup(bool onOff)
@@ -114,7 +122,7 @@ namespace Random_Experiment_WPF
                 return false;
             }
         }
-        bool test = true;
+        bool test = false;
         private void Compute(object data)
         {
             Stopwatch time = new Stopwatch();
@@ -131,7 +139,7 @@ namespace Random_Experiment_WPF
                 //long tick = DateTime.UtcNow.Ticks;
                 //Console.WriteLine($"{tick - last_tick}|{tick}");
                 //last_tick = tick;
-                for (int i = 0; i < DateTime.Now.Ticks % 256; i++)
+                for (int i = 0; i < DateTime.Now.Ticks % 65536; i++)
                     this.myRandom.NextDouble();
 
                 float primary = (float)this.myRandom.NextDouble();
@@ -145,7 +153,7 @@ namespace Random_Experiment_WPF
                     return;
                 }
 
-                //if (time.Elapsed.Minutes >= 2)
+                if (time.Elapsed.Minutes >= 5)
                 {
                     List<double> submit = new List<double>(values);
                     Dispatcher.Invoke(() => this.SubmitData(submit));
@@ -188,9 +196,31 @@ namespace Random_Experiment_WPF
             this.prBusy.IsActive = true;
             this.IsEnabled = false;
 
-            this.lbLastSubmit.Content = DateTime.Now.ToString("HH:mm dd:MM:YYYY");
+            this.lbLastSubmit.Content = DateTime.Now.ToString("HH:mm dd/MM/yyyy");
 
             this.myService.BeginGetToken(new AsyncCallback(GetTokenCallBack), submitData);
+        }
+        private void GetTimeZoneDataCallBack(IAsyncResult result)
+        {
+            try
+            {
+                
+            }
+            catch
+            {
+                
+            }
+        }
+        private void GetUserDataCallBack(IAsyncResult result)
+        {
+            try
+            {
+                
+            }
+            catch
+            {
+               
+            }
         }
         private void GetTokenCallBack(IAsyncResult result)
         {
