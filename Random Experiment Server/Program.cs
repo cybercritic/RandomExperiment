@@ -26,7 +26,7 @@ namespace Random_Experiment_Server
             binding.SendTimeout = new TimeSpan(0, 10, 0);
             binding.ReceiveTimeout = new TimeSpan(long.MaxValue);
             binding.MaxBufferPoolSize = 1024 * 1024 * 10;
-            binding.MaxReceivedMessageSize = 1024 * 1024;
+            binding.MaxReceivedMessageSize = 1024 * 1024 * 10;
             binding.ReaderQuotas.MaxArrayLength = 1000000;
             binding.ReaderQuotas.MaxStringContentLength = 1000000;
             

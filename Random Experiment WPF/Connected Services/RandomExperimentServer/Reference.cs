@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Random_Experiment_WPF.RandomExperimentService {
+namespace Random_Experiment_WPF.RandomExperimentServer {
     using System.Runtime.Serialization;
     using System;
     
@@ -171,7 +171,7 @@ namespace Random_Experiment_WPF.RandomExperimentService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="", ConfigurationName="RandomExperimentService.IRandomServer")]
+    [System.ServiceModel.ServiceContractAttribute(Namespace="", ConfigurationName="RandomExperimentServer.IRandomServer")]
     public interface IRandomServer {
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IRandomServer/GetToken", ReplyAction="urn:IRandomServer/GetTokenResponse")]
@@ -183,32 +183,32 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         string EndGetToken(System.IAsyncResult result);
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IRandomServer/SubmitStatus", ReplyAction="urn:IRandomServer/SubmitStatusResponse")]
-        string SubmitStatus(string token, Random_Experiment_WPF.RandomExperimentService.SQLData data);
+        string SubmitStatus(string token, Random_Experiment_WPF.RandomExperimentServer.SQLData data);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="urn:IRandomServer/SubmitStatus", ReplyAction="urn:IRandomServer/SubmitStatusResponse")]
-        System.IAsyncResult BeginSubmitStatus(string token, Random_Experiment_WPF.RandomExperimentService.SQLData data, System.AsyncCallback callback, object asyncState);
+        System.IAsyncResult BeginSubmitStatus(string token, Random_Experiment_WPF.RandomExperimentServer.SQLData data, System.AsyncCallback callback, object asyncState);
         
         string EndSubmitStatus(System.IAsyncResult result);
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IRandomServer/GetUserData", ReplyAction="urn:IRandomServer/GetUserDataResponse")]
-        Random_Experiment_WPF.RandomExperimentService.SQLData[] GetUserData(string userID, System.TimeSpan time);
+        System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> GetUserData(string userID, System.TimeSpan time);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="urn:IRandomServer/GetUserData", ReplyAction="urn:IRandomServer/GetUserDataResponse")]
         System.IAsyncResult BeginGetUserData(string userID, System.TimeSpan time, System.AsyncCallback callback, object asyncState);
         
-        Random_Experiment_WPF.RandomExperimentService.SQLData[] EndGetUserData(System.IAsyncResult result);
+        System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> EndGetUserData(System.IAsyncResult result);
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IRandomServer/GetTimeZoneData", ReplyAction="urn:IRandomServer/GetTimeZoneDataResponse")]
-        Random_Experiment_WPF.RandomExperimentService.SQLData[] GetTimeZoneData(int timeZone, System.TimeSpan time);
+        System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> GetTimeZoneData(int timeZone, System.TimeSpan time);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="urn:IRandomServer/GetTimeZoneData", ReplyAction="urn:IRandomServer/GetTimeZoneDataResponse")]
         System.IAsyncResult BeginGetTimeZoneData(int timeZone, System.TimeSpan time, System.AsyncCallback callback, object asyncState);
         
-        Random_Experiment_WPF.RandomExperimentService.SQLData[] EndGetTimeZoneData(System.IAsyncResult result);
+        System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> EndGetTimeZoneData(System.IAsyncResult result);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IRandomServerChannel : Random_Experiment_WPF.RandomExperimentService.IRandomServer, System.ServiceModel.IClientChannel {
+    public interface IRandomServerChannel : Random_Experiment_WPF.RandomExperimentServer.IRandomServer, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -260,10 +260,10 @@ namespace Random_Experiment_WPF.RandomExperimentService {
             this.results = results;
         }
         
-        public Random_Experiment_WPF.RandomExperimentService.SQLData[] Result {
+        public System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> Result {
             get {
                 base.RaiseExceptionIfNecessary();
-                return ((Random_Experiment_WPF.RandomExperimentService.SQLData[])(this.results[0]));
+                return ((System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData>)(this.results[0]));
             }
         }
     }
@@ -279,17 +279,17 @@ namespace Random_Experiment_WPF.RandomExperimentService {
             this.results = results;
         }
         
-        public Random_Experiment_WPF.RandomExperimentService.SQLData[] Result {
+        public System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> Result {
             get {
                 base.RaiseExceptionIfNecessary();
-                return ((Random_Experiment_WPF.RandomExperimentService.SQLData[])(this.results[0]));
+                return ((System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData>)(this.results[0]));
             }
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class RandomServerClient : System.ServiceModel.ClientBase<Random_Experiment_WPF.RandomExperimentService.IRandomServer>, Random_Experiment_WPF.RandomExperimentService.IRandomServer {
+    public partial class RandomServerClient : System.ServiceModel.ClientBase<Random_Experiment_WPF.RandomExperimentServer.IRandomServer>, Random_Experiment_WPF.RandomExperimentServer.IRandomServer {
         
         private BeginOperationDelegate onBeginGetTokenDelegate;
         
@@ -390,12 +390,12 @@ namespace Random_Experiment_WPF.RandomExperimentService {
             base.InvokeAsync(this.onBeginGetTokenDelegate, null, this.onEndGetTokenDelegate, this.onGetTokenCompletedDelegate, userState);
         }
         
-        public string SubmitStatus(string token, Random_Experiment_WPF.RandomExperimentService.SQLData data) {
+        public string SubmitStatus(string token, Random_Experiment_WPF.RandomExperimentServer.SQLData data) {
             return base.Channel.SubmitStatus(token, data);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSubmitStatus(string token, Random_Experiment_WPF.RandomExperimentService.SQLData data, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSubmitStatus(string token, Random_Experiment_WPF.RandomExperimentServer.SQLData data, System.AsyncCallback callback, object asyncState) {
             return base.Channel.BeginSubmitStatus(token, data, callback, asyncState);
         }
         
@@ -406,7 +406,7 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         
         private System.IAsyncResult OnBeginSubmitStatus(object[] inValues, System.AsyncCallback callback, object asyncState) {
             string token = ((string)(inValues[0]));
-            Random_Experiment_WPF.RandomExperimentService.SQLData data = ((Random_Experiment_WPF.RandomExperimentService.SQLData)(inValues[1]));
+            Random_Experiment_WPF.RandomExperimentServer.SQLData data = ((Random_Experiment_WPF.RandomExperimentServer.SQLData)(inValues[1]));
             return this.BeginSubmitStatus(token, data, callback, asyncState);
         }
         
@@ -423,11 +423,11 @@ namespace Random_Experiment_WPF.RandomExperimentService {
             }
         }
         
-        public void SubmitStatusAsync(string token, Random_Experiment_WPF.RandomExperimentService.SQLData data) {
+        public void SubmitStatusAsync(string token, Random_Experiment_WPF.RandomExperimentServer.SQLData data) {
             this.SubmitStatusAsync(token, data, null);
         }
         
-        public void SubmitStatusAsync(string token, Random_Experiment_WPF.RandomExperimentService.SQLData data, object userState) {
+        public void SubmitStatusAsync(string token, Random_Experiment_WPF.RandomExperimentServer.SQLData data, object userState) {
             if ((this.onBeginSubmitStatusDelegate == null)) {
                 this.onBeginSubmitStatusDelegate = new BeginOperationDelegate(this.OnBeginSubmitStatus);
             }
@@ -442,7 +442,7 @@ namespace Random_Experiment_WPF.RandomExperimentService {
                         data}, this.onEndSubmitStatusDelegate, this.onSubmitStatusCompletedDelegate, userState);
         }
         
-        public Random_Experiment_WPF.RandomExperimentService.SQLData[] GetUserData(string userID, System.TimeSpan time) {
+        public System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> GetUserData(string userID, System.TimeSpan time) {
             return base.Channel.GetUserData(userID, time);
         }
         
@@ -452,7 +452,7 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public Random_Experiment_WPF.RandomExperimentService.SQLData[] EndGetUserData(System.IAsyncResult result) {
+        public System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> EndGetUserData(System.IAsyncResult result) {
             return base.Channel.EndGetUserData(result);
         }
         
@@ -463,7 +463,7 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         }
         
         private object[] OnEndGetUserData(System.IAsyncResult result) {
-            Random_Experiment_WPF.RandomExperimentService.SQLData[] retVal = this.EndGetUserData(result);
+            System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> retVal = this.EndGetUserData(result);
             return new object[] {
                     retVal};
         }
@@ -494,7 +494,7 @@ namespace Random_Experiment_WPF.RandomExperimentService {
                         time}, this.onEndGetUserDataDelegate, this.onGetUserDataCompletedDelegate, userState);
         }
         
-        public Random_Experiment_WPF.RandomExperimentService.SQLData[] GetTimeZoneData(int timeZone, System.TimeSpan time) {
+        public System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> GetTimeZoneData(int timeZone, System.TimeSpan time) {
             return base.Channel.GetTimeZoneData(timeZone, time);
         }
         
@@ -504,7 +504,7 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public Random_Experiment_WPF.RandomExperimentService.SQLData[] EndGetTimeZoneData(System.IAsyncResult result) {
+        public System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> EndGetTimeZoneData(System.IAsyncResult result) {
             return base.Channel.EndGetTimeZoneData(result);
         }
         
@@ -515,7 +515,7 @@ namespace Random_Experiment_WPF.RandomExperimentService {
         }
         
         private object[] OnEndGetTimeZoneData(System.IAsyncResult result) {
-            Random_Experiment_WPF.RandomExperimentService.SQLData[] retVal = this.EndGetTimeZoneData(result);
+            System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> retVal = this.EndGetTimeZoneData(result);
             return new object[] {
                     retVal};
         }

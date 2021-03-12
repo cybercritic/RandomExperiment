@@ -113,17 +113,21 @@ namespace Random_Experiment_Server.WCF
 
         public List<SQLData> GetUserData(string userID, TimeSpan time)
         {
-            if (CheckDDOS(GetIP())) return null;
+            string ip = GetIP();
+            if (CheckDDOS(ip)) return null;
 
             if (time.TotalDays > 30 || time.Ticks <= 0)
                 return null;
+
+            Supporting.WriteLog($"[{ip}]:Served userdata [{userID.Substring(0, 8)}][{time}]");
 
             return ServerMain.Instance.mySQL.GetDataListUser(userID, time);
         }
 
         public List<SQLData> GetTimeZoneData(int timeZone, TimeSpan time)
         {
-            if (CheckDDOS(GetIP())) return null;
+            string ip = GetIP();
+            if (CheckDDOS(ip)) return null;
 
             if (time.TotalDays > 30 || time.Ticks <= 0)
                 return null;
@@ -148,14 +152,16 @@ namespace Random_Experiment_Server.WCF
                 }
 
                 SQLData current = new SQLData();
-                current.Mean = meanS / (double)rawData.Count;
-                current.Median = medianS / (double)rawData.Count;
-                current.StdDev = stdDevS / (double)rawData.Count;
+                current.Mean = meanS / rawData.Count;
+                current.Median = medianS / rawData.Count;
+                current.StdDev = stdDevS / rawData.Count;
                 current.TimeZone = timeZone;
                 current.Time = end;
 
                 result.Add(current);
             }
+
+            Supporting.WriteLog($"[{ip}]:Served global data [{timeZone}][{time}]");
 
             return result;
         }

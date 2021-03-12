@@ -37,7 +37,6 @@
                             <Label Content="Run at startup:" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Width="131"/>
                             <CheckBox x:Name="cbStartup" Margin="146,107,479,0" Height="22" VerticalAlignment="Top" Checked="cbStartup_Checked" Unchecked="cbStartup_Unchecked"/>
                             <ComboBox SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,104,10,0">
-                                <Label Content="Pick date range"/>
                                 <Label Content="24 hours"/>
                                 <Label Content="7 days"/>
                                 <Label Content="2 weeks"/>
@@ -46,10 +45,10 @@
                     </GroupBox>
                     <lvc:CartesianChart Series="{Binding LocalCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="10,190,10,0" Grid.ColumnSpan="2">
                         <lvc:CartesianChart.AxisY>
-                            <lvc:Axis Title="Sales" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
+                            <lvc:Axis Title="Range" LabelFormatter="{Binding YFormatter}" MaxValue="1" MinValue="0"></lvc:Axis>
                         </lvc:CartesianChart.AxisY>
                         <lvc:CartesianChart.AxisX>
-                            <lvc:Axis Title="Month" Labels="{Binding Labels}"></lvc:Axis>
+                            <lvc:Axis Title="Time" Labels="{Binding Labels}"></lvc:Axis>
                         </lvc:CartesianChart.AxisX>
                     </lvc:CartesianChart>
                 </Grid>

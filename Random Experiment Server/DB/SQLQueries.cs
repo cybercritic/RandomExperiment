@@ -145,7 +145,7 @@ namespace Random_Experiment_Server.DB
                 {
                     SQLData current = new SQLData();
 
-                    current.User = Convert.ToString(reader["user"]);
+                    current.User = Convert.ToString(reader["user_id"]);
                     current.TimeZone = Convert.ToInt32(reader["time_zone"]);
                     current.Time = Convert.ToDateTime(reader["time"]);
                     current.Active = Convert.ToBoolean(reader["active"]);
@@ -186,7 +186,7 @@ namespace Random_Experiment_Server.DB
                 {
                     SQLData current = new SQLData();
 
-                    current.User = Convert.ToString(reader["user"]);
+                    current.User = Convert.ToString(reader["user_id"]);
                     current.TimeZone = Convert.ToInt32(reader["time_zone"]);
                     current.Time = Convert.ToDateTime(reader["time"]);
                     current.Active = Convert.ToBoolean(reader["active"]);

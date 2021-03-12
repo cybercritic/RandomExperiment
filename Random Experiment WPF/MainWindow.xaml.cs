@@ -19,8 +19,8 @@ using LiveCharts.Wpf;
 using MahApps.Metro.Controls;
 using System.Diagnostics;
 using Microsoft.Win32;
-using Random_Experiment_WPF.RandomExperimentService;
 using System.ServiceModel;
+using Random_Experiment_WPF.RandomExperimentServer;
 
 namespace Random_Experiment_WPF
 {
@@ -30,6 +30,9 @@ namespace Random_Experiment_WPF
     public partial class MainWindow : MetroWindow
     {
         public SeriesCollection SeriesCollection { get; set; }
+        public SeriesCollection LocalCollection { get; set; }
+        public AxesCollection AxisYCollection { get; set; }
+
         public string[] Labels { get; set; }
         public Func<double, string> YFormatter { get; set; }
         public Random myRandom = new Random(Math.Abs((int)DateTime.Now.Ticks));
@@ -39,7 +42,7 @@ namespace Random_Experiment_WPF
         private RandomServerClient myService;
         private List<SQLData> myLocalData { get; set; }
         private List<SQLData> myGlobalData { get; set; }
-
+       
         public struct Info 
         { 
             public string user { get; set; }
@@ -99,7 +102,10 @@ namespace Random_Experiment_WPF
             this.myGlobalData = new List<SQLData>();
             this.myLocalData = new List<SQLData>();
 
-            //this.myService.BeginGetUserData(this.myUser.user, 7, this.GetUserDataCallBack, null);
+            this.prBusy.IsActive = true;
+            this.IsEnabled = false;
+
+            this.myService.BeginGetUserData(this.myUser.user, TimeSpan.FromDays(7), this.GetUserDataCallBack, null);
         }
 
         private bool SetStartup(bool onOff)
@@ -199,28 +205,30 @@ namespace Random_Experiment_WPF
             this.lbLastSubmit.Content = DateTime.Now.ToString("HH:mm dd/MM/yyyy");
 
             this.myService.BeginGetToken(new AsyncCallback(GetTokenCallBack), submitData);
+
         }
         private void GetTimeZoneDataCallBack(IAsyncResult result)
         {
             try
             {
-                
+                this.myGlobalData = this.myService.EndGetTimeZoneData(result);
             }
-            catch
-            {
-                
-            }
+            catch {}
+
+            Dispatcher.Invoke(() => this.prBusy.IsActive = false);
+            Dispatcher.Invoke(() => this.IsEnabled = true);
         }
         private void GetUserDataCallBack(IAsyncResult result)
         {
             try
             {
-                
+                this.myLocalData = this.myService.EndGetUserData(result);
+                Dispatcher.Invoke(() => this.PopulateLocalGraph());
             }
-            catch
-            {
-               
-            }
+            catch (Exception e) {}
+
+            Dispatcher.Invoke(() => this.prBusy.IsActive = false);
+            Dispatcher.Invoke(() => this.IsEnabled = true);
         }
         private void GetTokenCallBack(IAsyncResult result)
         {
@@ -290,10 +298,60 @@ namespace Random_Experiment_WPF
 
             this.Close();
         }
+
+        public void PopulateLocalGraph()
+        {
+            ChartValues<double> mean = new ChartValues<double>();
+            ChartValues<double> median = new ChartValues<double>();
+            ChartValues<double> stddev = new ChartValues<double>();
+            List<string> labels = new List<string>();
+
+            foreach(SQLData data in this.myLocalData)
+            {
+                mean.Add(data.Mean);
+                median.Add(data.Median);
+                stddev.Add(data.StdDev);
+                labels.Add(data.Time.ToString("HH:mm dd/MM"));
+            }
+
+            LocalCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Mean",
+                    Values = mean,
+                    PointGeometry = null
+                },
+                new LineSeries
+                {
+                    Title = "Median",
+                    Values = median,
+                    PointGeometry = null
+                },
+                new LineSeries
+                {
+                    Title = "STD Dev",
+                    Values = stddev,
+                    PointGeometry = null
+                }
+            };
+
+            /*AxisYCollection = new AxesCollection
+            {
+                new Axis { Title = "Value", Foreground = Brushes.White, LabelFormatter = YFormatter },
+                new Axis { Title = "Value", Foreground = Brushes.White, LabelFormatter = YFormatter }
+            };*/
+
+            Labels = labels.ToArray();
+            YFormatter = value => value.ToString("N4");
+
+            DataContext = this;
+        }
+
         public void PopulateGraph()
         {
 
-            SeriesCollection = new SeriesCollection
+            /*SeriesCollection = new SeriesCollection
             {
                 new LineSeries
                 {
@@ -332,7 +390,7 @@ namespace Random_Experiment_WPF
             //modifying any series values will also animate and update the chart
             //SeriesCollection[3].Values.Add(5d);
 
-            DataContext = this;
+            //DataContext = this;
         }
         private void cbStartup_Checked(object sender, RoutedEventArgs e)
         {

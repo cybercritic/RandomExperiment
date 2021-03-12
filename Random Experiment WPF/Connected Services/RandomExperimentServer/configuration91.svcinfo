@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="HSvsVXNVdbZ9hDSptf9UYdU2NCKoGu2hZ9T5Iy3dNEU=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="f90lhVSzMQDG4t+4UzsjCpTScEet+HWVB8yxO1/Y1ls=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="wsHttpBinding" name="WSHttpBinding_IRandomServer">
       <properties>
@@ -127,7 +127,7 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="WSHttpBinding_IRandomServer" contract="RandomExperimentService.IRandomServer" bindingType="wsHttpBinding" address="http://127.0.0.1:3030/" bindingConfiguration="WSHttpBinding_IRandomServer">
+    <endpoint name="WSHttpBinding_IRandomServer" contract="RandomExperimentServer.IRandomServer" bindingType="wsHttpBinding" address="http://127.0.0.1:3030/" bindingConfiguration="WSHttpBinding_IRandomServer">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>http://127.0.0.1:3030/</serializedValue>
@@ -142,7 +142,7 @@
           <serializedValue>WSHttpBinding_IRandomServer</serializedValue>
         </property>
         <property path="/contract" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>RandomExperimentService.IRandomServer</serializedValue>
+          <serializedValue>RandomExperimentServer.IRandomServer</serializedValue>
         </property>
         <property path="/headers" isComplexType="true" isExplicitlyDefined="false" clrType="System.ServiceModel.Configuration.AddressHeaderCollectionElement, System.ServiceModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>System.ServiceModel.Configuration.AddressHeaderCollectionElement</serializedValue>
