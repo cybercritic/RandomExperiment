@@ -205,6 +205,14 @@ namespace Random_Experiment_WPF.RandomExperimentServer {
         System.IAsyncResult BeginGetTimeZoneData(int timeZone, System.TimeSpan time, System.AsyncCallback callback, object asyncState);
         
         System.Collections.Generic.List<Random_Experiment_WPF.RandomExperimentServer.SQLData> EndGetTimeZoneData(System.IAsyncResult result);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IRandomServer/StatusReport", ReplyAction="urn:IRandomServer/StatusReportResponse")]
+        string StatusReport();
+        
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="urn:IRandomServer/StatusReport", ReplyAction="urn:IRandomServer/StatusReportResponse")]
+        System.IAsyncResult BeginStatusReport(System.AsyncCallback callback, object asyncState);
+        
+        string EndStatusReport(System.IAsyncResult result);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -289,6 +297,25 @@ namespace Random_Experiment_WPF.RandomExperimentServer {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public partial class StatusReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        public StatusReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        public string Result {
+            get {
+                base.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class RandomServerClient : System.ServiceModel.ClientBase<Random_Experiment_WPF.RandomExperimentServer.IRandomServer>, Random_Experiment_WPF.RandomExperimentServer.IRandomServer {
         
         private BeginOperationDelegate onBeginGetTokenDelegate;
@@ -314,6 +341,12 @@ namespace Random_Experiment_WPF.RandomExperimentServer {
         private EndOperationDelegate onEndGetTimeZoneDataDelegate;
         
         private System.Threading.SendOrPostCallback onGetTimeZoneDataCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginStatusReportDelegate;
+        
+        private EndOperationDelegate onEndStatusReportDelegate;
+        
+        private System.Threading.SendOrPostCallback onStatusReportCompletedDelegate;
         
         public RandomServerClient() {
         }
@@ -341,6 +374,8 @@ namespace Random_Experiment_WPF.RandomExperimentServer {
         public event System.EventHandler<GetUserDataCompletedEventArgs> GetUserDataCompleted;
         
         public event System.EventHandler<GetTimeZoneDataCompletedEventArgs> GetTimeZoneDataCompleted;
+        
+        public event System.EventHandler<StatusReportCompletedEventArgs> StatusReportCompleted;
         
         public string GetToken() {
             return base.Channel.GetToken();
@@ -544,6 +579,54 @@ namespace Random_Experiment_WPF.RandomExperimentServer {
             base.InvokeAsync(this.onBeginGetTimeZoneDataDelegate, new object[] {
                         timeZone,
                         time}, this.onEndGetTimeZoneDataDelegate, this.onGetTimeZoneDataCompletedDelegate, userState);
+        }
+        
+        public string StatusReport() {
+            return base.Channel.StatusReport();
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginStatusReport(System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginStatusReport(callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public string EndStatusReport(System.IAsyncResult result) {
+            return base.Channel.EndStatusReport(result);
+        }
+        
+        private System.IAsyncResult OnBeginStatusReport(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            return this.BeginStatusReport(callback, asyncState);
+        }
+        
+        private object[] OnEndStatusReport(System.IAsyncResult result) {
+            string retVal = this.EndStatusReport(result);
+            return new object[] {
+                    retVal};
+        }
+        
+        private void OnStatusReportCompleted(object state) {
+            if ((this.StatusReportCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.StatusReportCompleted(this, new StatusReportCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void StatusReportAsync() {
+            this.StatusReportAsync(null);
+        }
+        
+        public void StatusReportAsync(object userState) {
+            if ((this.onBeginStatusReportDelegate == null)) {
+                this.onBeginStatusReportDelegate = new BeginOperationDelegate(this.OnBeginStatusReport);
+            }
+            if ((this.onEndStatusReportDelegate == null)) {
+                this.onEndStatusReportDelegate = new EndOperationDelegate(this.OnEndStatusReport);
+            }
+            if ((this.onStatusReportCompletedDelegate == null)) {
+                this.onStatusReportCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnStatusReportCompleted);
+            }
+            base.InvokeAsync(this.onBeginStatusReportDelegate, null, this.onEndStatusReportDelegate, this.onStatusReportCompletedDelegate, userState);
         }
     }
 }

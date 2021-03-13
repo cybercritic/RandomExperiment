@@ -55,8 +55,6 @@ namespace Random_Experiment_WPF
         {
             InitializeComponent();
 
-            this.PopulateGraph();
-
             TimeZone localZone = TimeZone.CurrentTimeZone;
             TimeSpan currentOffset = localZone.GetUtcOffset(DateTime.Now);
 
@@ -98,7 +96,7 @@ namespace Random_Experiment_WPF
             Properties.Settings.Default.Save();
 
             myService = new RandomServerClient();
-            myService.Endpoint.Address = new EndpointAddress(string.Format("http://{0}:3030", "127.0.0.1"));//server.pypem.com//127.0.0.1
+            myService.Endpoint.Address = new EndpointAddress(string.Format("http://{0}:3030", "server.pypem.com"));//server.pypem.com//127.0.0.1
             myService.InnerChannel.OperationTimeout = new TimeSpan(0, 2, 30);
             
             this.myGlobalData = new List<SQLData>();

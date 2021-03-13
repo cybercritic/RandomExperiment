@@ -20,7 +20,7 @@ namespace Random_Experiment_Server
 
             ServiceHost serviceHost = new ServiceHost(typeof(RandomServer), baseAddress);
 
-            WSHttpBinding binding = new WSHttpBinding();
+            BasicHttpBinding binding = new BasicHttpBinding();
             binding.OpenTimeout = new TimeSpan(0, 5, 0);
             binding.CloseTimeout = new TimeSpan(0, 5, 0);
             binding.SendTimeout = new TimeSpan(0, 10, 0);
@@ -32,7 +32,7 @@ namespace Random_Experiment_Server
             
             ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
             smb.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
-            smb.HttpGetEnabled = true;
+            smb.HttpGetEnabled = false;
             serviceHost.Description.Behaviors.Add(smb);
 
             ServiceEndpoint tst = serviceHost.AddServiceEndpoint(typeof(IRandomServer), new WebHttpBinding(), "get");
