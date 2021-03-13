@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:Random_Experiment_WPF"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
-        Title="MainWindow" Height="462.784" Width="838.011" StateChanged="MetroWindow_StateChanged" Closing="MetroWindow_Closing">
+        Title="Random Experiment" Height="462" Width="874" MinHeight="462" MinWidth="874" StateChanged="MetroWindow_StateChanged" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded"  >
     <Grid Margin="10,10,10,10" >
         <tb:TaskbarIcon x:Name="tbiTaskBar" IconSource="Resources/random_experiment.ico" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown">
             <tb:TaskbarIcon.ContextMenu>
@@ -18,7 +18,7 @@
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
-        <TabControl TabStripPlacement="Left" Margin="10">
+        <TabControl x:Name="tabMain" TabStripPlacement="Left" Margin="10" SelectionChanged="tabMain_SelectionChanged">
             <TabItem Header="This PC">
                 <Grid>
 
@@ -36,45 +36,64 @@
                             <Label x:Name="lbLastSubmit" Content="-" Margin="146,72,10,0" VerticalAlignment="Top"/>
                             <Label Content="Run at startup:" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Width="131"/>
                             <CheckBox x:Name="cbStartup" Margin="146,107,479,0" Height="22" VerticalAlignment="Top" Checked="cbStartup_Checked" Unchecked="cbStartup_Unchecked"/>
-                            <ComboBox SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,104,10,0">
+
+                            <ComboBox x:Name="cbThisTime" SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,103,90,0" SelectionChanged="cbThisTime_SelectionChanged">
                                 <Label Content="24 hours"/>
                                 <Label Content="7 days"/>
                                 <Label Content="2 weeks"/>
                             </ComboBox>
+                            <Button x:Name="btRefreshLocal" Content="Refresh" HorizontalAlignment="Right" Margin="0,102,10,0" VerticalAlignment="Top" Width="75" Click="btRefreshLocal_Click"/>
                         </Grid>
                     </GroupBox>
                     <lvc:CartesianChart Series="{Binding LocalCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="10,190,10,0" Grid.ColumnSpan="2">
                         <lvc:CartesianChart.AxisY>
-                            <lvc:Axis Title="Range" LabelFormatter="{Binding YFormatter}" MaxValue="1" MinValue="0"></lvc:Axis>
+                            <lvc:Axis Title="Range" LabelFormatter="{Binding YFormatterA}" MaxValue="1" MinValue="0"></lvc:Axis>
                         </lvc:CartesianChart.AxisY>
                         <lvc:CartesianChart.AxisX>
-                            <lvc:Axis Title="Time" Labels="{Binding Labels}"></lvc:Axis>
+                            <lvc:Axis Title="Time" Labels="{Binding LabelsLocal}"></lvc:Axis>
                         </lvc:CartesianChart.AxisX>
                     </lvc:CartesianChart>
                 </Grid>
             </TabItem>
             <TabItem Header="Global">
                 <Grid>
-                    <ComboBox SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140">
-                        <Label Content="Pick timezone"/>
+                    <TextBlock VerticalAlignment="Bottom" Text="The service is not well known, there might not be enough data for this function." Margin="10,0" Height="16"/>
+                    <ComboBox x:Name="cbTimeZoneGlobal" SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" SelectionChanged="cbTimeZoneGlobal_SelectionChanged">
+
                     </ComboBox>
-                    <ComboBox SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,0,145,0">
+                    <ComboBox x:Name="cbGlobalTimeZone" SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,0,145,0" SelectionChanged="cbGlobalTimeZone_SelectionChanged">
                         <Label Content="24 hours"/>
                         <Label Content="7 days"/>
                         <Label Content="2 weeks"/>
                     </ComboBox>
-                    <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="0,31,0,0">
+                    <lvc:CartesianChart Series="{Binding GlobalCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="10,31,10,21">
                         <lvc:CartesianChart.AxisY>
-                            <lvc:Axis Title="Sales" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
+                            <lvc:Axis Title="Range" LabelFormatter="{Binding YFormatterB}" MaxValue="1" MinValue="0"></lvc:Axis>
                         </lvc:CartesianChart.AxisY>
                         <lvc:CartesianChart.AxisX>
-                            <lvc:Axis Title="Month" Labels="{Binding Labels}"></lvc:Axis>
+                            <lvc:Axis Title="Time" Labels="{Binding LabelsGlobal}"></lvc:Axis>
                         </lvc:CartesianChart.AxisX>
                     </lvc:CartesianChart>
                 </Grid>
             </TabItem>
             <TabItem Header="About">
-                <Grid></Grid>
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Margin="10,10,10,0" TextWrapping="Wrap" Text="THANK YOU" VerticalAlignment="Top" TextAlignment="Center" FontWeight="Bold" FontSize="22"/>
+                        <TextBlock/>
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True" Text="This program is based on the Global Consciousness Project, it generates 10 random numbers per second and then records the mean, median and standard deviation of those every 5 minutes and submits the data to the server. If you wish to get the full data set you can contact me on cybercritics@gmail.com"/>
+                        <TextBlock Text=""/>
+                        <TextBlock Text="• Thank you for using this program."/>
+                        <!--<TextBlock x:Name="bpUsedTimes" Text="• Your IPa has been updated over 1000 times since this has been shown."/>-->
+                        <TextBlock Text="• By donating you are helping to keep this service alive."/>
+                        <TextBlock Text="• Servers cost money."/>
+                        <TextBlock Text="• Devs have to eat."/>
+                        <TextBlock>
+                        </TextBlock>
+                        <TextBlock Text=""/>
+                        <TextBox Text="paypal.me/cybercritic" IsReadOnly="True" TextAlignment="Center" FontWeight="Bold" FontSize="20"/>
+                    </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
         <mah:ProgressRing x:Name="prBusy" IsActive="False" HorizontalAlignment="Center" Margin="258,169,272,170" VerticalAlignment="Center" Width="64" Height="64"/>

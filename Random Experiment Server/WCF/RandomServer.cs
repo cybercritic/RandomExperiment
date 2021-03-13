@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using static Random_Experiment_Server.ServerMain;
 
 namespace Random_Experiment_Server.WCF
 {
@@ -16,12 +17,16 @@ namespace Random_Experiment_Server.WCF
         public DateTime Time { get; set; }
     }
 
+    [ServiceBehavior(Namespace = "", ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class RandomServer : IRandomServer
     {
         public static string GetIP()
         {
             try
             {
+                DateTime cut = DateTime.UtcNow - TimeSpan.FromDays(7);
+                ServerMain.Instance.myStats.RemoveAll(p => p.time < cut);
+
                 OperationContext context = OperationContext.Current;
                 MessageProperties prop = context.IncomingMessageProperties;
                 RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
@@ -43,6 +48,7 @@ namespace Random_Experiment_Server.WCF
             }
 
             ServerMain.DDOSlist.Add(new Tuple<string, DateTime>(ip, DateTime.UtcNow));
+            ServerMain.Instance.myStats.Add(new ServerMain.ServerStats { ip = ip, served = ServerMain.Served.DDOS, time = DateTime.UtcNow });
 
             return false;
         }
@@ -69,6 +75,8 @@ namespace Random_Experiment_Server.WCF
             string ip = GetIP();
             if (CheckDDOS(ip)) return null;
 
+            if (data == null) return null;
+
             if (!ServerMain.Instance.Sessions.Exists(p => p.IP == ip && p.Token == token))
                 return "error:no token";
 
@@ -87,18 +95,22 @@ namespace Random_Experiment_Server.WCF
             if (ServerMain.Instance.mySQL.AddData(data).IndexOf("error") != -1)
                 return "error:SQL failed";
 
-            Supporting.WriteLog($"[{ip}][{data.User.Substring(0,8)}]:Added data[{data.Mean.ToString("N4")}][{data.Median.ToString("N4")}][{data.StdDev.ToString("N4")}][{data.Active}][{data.Count}]");
-            
+            Supporting.WriteLog($"[{ip}][{data.User.Substring(0, 8)}]:Added data[{data.Mean.ToString("N4")}][{data.Median.ToString("N4")}][{data.StdDev.ToString("N4")}][{data.Active}][{data.Count}]");
+            ServerMain.Instance.myStats.Add(new ServerMain.ServerStats { ip = ip, served = ServerMain.Served.Submit, time = DateTime.UtcNow });
+
             return "success";
         }
 
         public void AddToken(AuthenticatedToken token)
         {
-            if (CheckDDOS(GetIP())) return;
+            string ip = GetIP();
+            if (CheckDDOS(ip)) return;
 
             ServerMain.Instance.Sessions.Add(token);
 
             Supporting.WriteLog($"[{token.IP}]:Added token");
+            ServerMain.Instance.myStats.Add(new ServerMain.ServerStats { ip = ip, served = ServerMain.Served.Token, time = DateTime.UtcNow });
+
         }
 
         private byte[] MakeRandomSecret()
@@ -116,10 +128,11 @@ namespace Random_Experiment_Server.WCF
             string ip = GetIP();
             if (CheckDDOS(ip)) return null;
 
-            if (time.TotalDays > 30 || time.Ticks <= 0)
+            if (time == null || time.TotalDays > 30 || time.Ticks <= 0)
                 return null;
 
             Supporting.WriteLog($"[{ip}]:Served userdata [{userID.Substring(0, 8)}][{time}]");
+            ServerMain.Instance.myStats.Add(new ServerMain.ServerStats { ip = ip, served = ServerMain.Served.GetLocal, time = DateTime.UtcNow });
 
             return ServerMain.Instance.mySQL.GetDataListUser(userID, time);
         }
@@ -129,18 +142,22 @@ namespace Random_Experiment_Server.WCF
             string ip = GetIP();
             if (CheckDDOS(ip)) return null;
 
-            if (time.TotalDays > 30 || time.Ticks <= 0)
+            if (timeZone < -12 || timeZone > 12 || time == null || time.TotalDays > 30 || time.Ticks <= 0)
                 return null;
 
             List<SQLData> result = new List<SQLData>();
 
             List<SQLData> rawData = ServerMain.Instance.mySQL.GetDataListTimeZone(timeZone, time);
-            for (int i = -(Convert.ToInt32(time.TotalMinutes) / 5); i <= 0; i += 5)
+
+            if (rawData.Count == 0) return null;
+
+            for (int i = -Convert.ToInt32(time.TotalMinutes); i <= 0; i += 5)
             {
-                DateTime start = DateTime.UtcNow - TimeSpan.FromMinutes(i);
-                DateTime end = DateTime.UtcNow - TimeSpan.FromMinutes(i + 5);
+                DateTime start = DateTime.UtcNow + TimeSpan.FromMinutes(i);
+                DateTime end = DateTime.UtcNow + TimeSpan.FromMinutes(i + 5);
 
                 double meanS = 0, medianS = 0, stdDevS = 0;
+                long count = 0;
                 foreach(SQLData data in rawData)
                 {
                     if (data.Time < start || data.Time > end)
@@ -149,19 +166,37 @@ namespace Random_Experiment_Server.WCF
                     meanS += data.Mean;
                     medianS += data.Median;
                     stdDevS += data.StdDev;
+                    count++;
                 }
 
+                if (meanS == 0 || medianS == 0) continue;
+
                 SQLData current = new SQLData();
-                current.Mean = meanS / rawData.Count;
-                current.Median = medianS / rawData.Count;
-                current.StdDev = stdDevS / rawData.Count;
+                current.Mean = meanS / count;
+                current.Median = medianS / count;
+                current.StdDev = stdDevS / count;
                 current.TimeZone = timeZone;
                 current.Time = end;
 
                 result.Add(current);
             }
 
+            if (result.Count == 0 || result.Exists(p => p.Mean == double.NaN || p.Median == double.NaN || p.StdDev == double.NaN)) return null;
+
             Supporting.WriteLog($"[{ip}]:Served global data [{timeZone}][{time}]");
+            ServerMain.Instance.myStats.Add(new ServerMain.ServerStats { ip = ip, served = ServerMain.Served.GetGlobal, time = DateTime.UtcNow });
+
+            return result;
+        }
+
+        public string StatusReport()
+        {
+            string result = "";
+
+            for (int i = 0; i < 5; i++)
+                result += $"{(Served)i}:{ServerMain.Instance.myStats.Count(p => p.served == (Served)i)}|"; ;
+
+            result += $"ip:{(from x in ServerMain.Instance.myStats select x.ip).Distinct().Count()}";
 
             return result;
         }

@@ -10,11 +10,20 @@ namespace Random_Experiment_Server
 {
     public class ServerMain
     {
+        public enum Served { Token, Submit, GetLocal, GetGlobal, DDOS }
+        public class ServerStats
+        {
+            public Served served { get; set; }
+            public string ip { get; set; }
+            public DateTime time { get; set; }
+        }
+
         public static ServerMain Instance;
         public SQLQueries mySQL { get; set; }
         public static List<Tuple<string, DateTime>> DDOSlist = new List<Tuple<string, DateTime>>();
         public Random myRandom = new Random((int)DateTime.UtcNow.Ticks % int.MaxValue);
         public List<AuthenticatedToken> Sessions { get; set; }
+        public List<ServerStats> myStats { get; set; }
 
         public ServerMain()
         {
@@ -25,6 +34,7 @@ namespace Random_Experiment_Server
 
             this.Sessions = new List<AuthenticatedToken>();
             this.mySQL = new SQLQueries();
+            this.myStats = new List<ServerStats>();
         }
 
         public static bool CheckDDOS(string ip)

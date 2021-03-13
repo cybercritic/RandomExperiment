@@ -35,6 +35,9 @@ namespace Random_Experiment_Server
             smb.HttpGetEnabled = true;
             serviceHost.Description.Behaviors.Add(smb);
 
+            ServiceEndpoint tst = serviceHost.AddServiceEndpoint(typeof(IRandomServer), new WebHttpBinding(), "get");
+            tst.EndpointBehaviors.Add(new WebHttpBehavior());
+
             serviceHost.AddServiceEndpoint(typeof(IRandomServer), binding, baseAddress);
             serviceHost.CloseTimeout = new TimeSpan(long.MaxValue);
             serviceHost.OpenTimeout = new TimeSpan(long.MaxValue);

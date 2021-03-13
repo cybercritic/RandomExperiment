@@ -29,12 +29,13 @@ namespace Random_Experiment_WPF
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        public SeriesCollection SeriesCollection { get; set; }
+        public SeriesCollection GlobalCollection { get; set; }
         public SeriesCollection LocalCollection { get; set; }
-        public AxesCollection AxisYCollection { get; set; }
-
-        public string[] Labels { get; set; }
-        public Func<double, string> YFormatter { get; set; }
+        
+        public string[] LabelsLocal { get; set; }
+        public string[] LabelsGlobal { get; set; }
+        public Func<double, string> YFormatterA { get; set; }
+        public Func<double, string> YFormatterB { get; set; }
         public Random myRandom = new Random(Math.Abs((int)DateTime.Now.Ticks));
         public Info myUser { get; set; }
         private Thread computeThread { get; set; }
@@ -48,6 +49,7 @@ namespace Random_Experiment_WPF
             public string user { get; set; }
             public int time_zone { get; set; }
         }
+        private bool first = true;
 
         public MainWindow()
         {
@@ -105,7 +107,12 @@ namespace Random_Experiment_WPF
             this.prBusy.IsActive = true;
             this.IsEnabled = false;
 
-            this.myService.BeginGetUserData(this.myUser.user, TimeSpan.FromDays(7), this.GetUserDataCallBack, null);
+            this.myService.BeginGetUserData(this.myUser.user, TimeSpan.FromHours(24), this.GetUserDataCallBack, null);
+
+            for (int i = -12; i <= 12; i++)
+                this.cbTimeZoneGlobal.Items.Add($"UTC{(i >= 0 ? "+" : "")}{i}");
+
+            this.cbTimeZoneGlobal.SelectedIndex = this.myUser.time_zone + 12;
         }
 
         private bool SetStartup(bool onOff)
@@ -204,14 +211,18 @@ namespace Random_Experiment_WPF
 
             this.lbLastSubmit.Content = DateTime.Now.ToString("HH:mm dd/MM/yyyy");
 
-            this.myService.BeginGetToken(new AsyncCallback(GetTokenCallBack), submitData);
-
+            try
+            {
+                this.myService.BeginGetToken(new AsyncCallback(GetTokenCallBack), submitData);
+            }
+            catch { this.InitializeServer(); }
         }
         private void GetTimeZoneDataCallBack(IAsyncResult result)
         {
             try
             {
                 this.myGlobalData = this.myService.EndGetTimeZoneData(result);
+                Dispatcher.Invoke(() => this.PopulateGlobalGraph());
             }
             catch {}
 
@@ -243,6 +254,8 @@ namespace Random_Experiment_WPF
                 Dispatcher.Invoke(() => this.lbLastSubmit.Content = "[error]");
                 Dispatcher.Invoke(() => this.prBusy.IsActive = false);
                 Dispatcher.Invoke(() => this.IsEnabled = true);
+
+                this.InitializeServer();
             }
         }
         private void GetSubmitCallBack(IAsyncResult result)
@@ -301,6 +314,8 @@ namespace Random_Experiment_WPF
 
         public void PopulateLocalGraph()
         {
+            if (this.myLocalData == null || this.myLocalData.Count == 0) return;
+
             ChartValues<double> mean = new ChartValues<double>();
             ChartValues<double> median = new ChartValues<double>();
             ChartValues<double> stddev = new ChartValues<double>();
@@ -336,14 +351,54 @@ namespace Random_Experiment_WPF
                 }
             };
 
-            /*AxisYCollection = new AxesCollection
-            {
-                new Axis { Title = "Value", Foreground = Brushes.White, LabelFormatter = YFormatter },
-                new Axis { Title = "Value", Foreground = Brushes.White, LabelFormatter = YFormatter }
-            };*/
+            LabelsLocal = labels.ToArray();
+            YFormatterA = value => value.ToString("N4");
 
-            Labels = labels.ToArray();
-            YFormatter = value => value.ToString("N4");
+            DataContext = this;
+        }
+
+        public void PopulateGlobalGraph()
+        {
+            if (this.myGlobalData == null || this.myGlobalData.Count == 0) return;
+
+            ChartValues<double> mean = new ChartValues<double>();
+            ChartValues<double> median = new ChartValues<double>();
+            ChartValues<double> stddev = new ChartValues<double>();
+            List<string> labels = new List<string>();
+
+            foreach (SQLData data in this.myGlobalData)
+            {
+                mean.Add(data.Mean);
+                median.Add(data.Median);
+                stddev.Add(data.StdDev);
+                labels.Add(data.Time.ToString("HH:mm dd/MM"));
+            }
+
+            GlobalCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Mean",
+                    Values = mean,
+                    PointGeometry = null
+                },
+                new LineSeries
+                {
+                    Title = "Median",
+                    Values = median,
+                    PointGeometry = null
+                },
+                new LineSeries
+                {
+                    Title = "STD Dev",
+                    Values = stddev,
+                    PointGeometry = null
+                }
+            };
+
+            LabelsGlobal = labels.ToArray();
+            YFormatterB = value => value.ToString("N4");
+
 
             DataContext = this;
         }
@@ -373,8 +428,15 @@ namespace Random_Experiment_WPF
                 }
             };
 
-            Labels = new[] { "Jan", "Feb", "Mar", "Apr", "May" };
-            YFormatter = value => value.ToString("C");
+                        /*AxisYCollection = new AxesCollection
+            {
+                new Axis { Title = "Value", Foreground = Brushes.White, LabelFormatter = YFormatter },
+                new Axis { Title = "Value", Foreground = Brushes.White, LabelFormatter = YFormatter }
+            };*/
+
+
+            //LabelsLocal = new[] { "Jan", "Feb", "Mar", "Apr", "May" };
+            //YFormatter = value => value.ToString("C");
 
             //modifying the series collection will animate and update the chart
             /*SeriesCollection.Add(new LineSeries
@@ -414,6 +476,107 @@ namespace Random_Experiment_WPF
             this.StopThread = true;
             while (!this.StopThread)
                 Thread.Sleep(100);
+        }
+
+        private void cbThisTime_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.first) return;
+
+            TimeSpan range = TimeSpan.FromDays(1);
+            if (this.cbThisTime.SelectedIndex == 0)
+                range = TimeSpan.FromHours(24);
+            else if (this.cbThisTime.SelectedIndex == 1)
+                range = TimeSpan.FromDays(7);
+            else if (this.cbThisTime.SelectedIndex == 2)
+                range = TimeSpan.FromDays(14);
+
+            try
+            {
+                this.prBusy.IsActive = true;
+                this.IsEnabled = false;
+
+                this.myService.BeginGetUserData(this.myUser.user, range, this.GetUserDataCallBack, null);
+            }
+            catch { this.InitializeServer(); }
+        }
+
+        private void cbTimeZoneGlobal_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.first) return;
+
+            TimeSpan range = TimeSpan.FromDays(1);
+            if (this.cbGlobalTimeZone.SelectedIndex == 0)
+                range = TimeSpan.FromHours(24);
+            else if (this.cbGlobalTimeZone.SelectedIndex == 1)
+                range = TimeSpan.FromDays(7);
+            else if (this.cbGlobalTimeZone.SelectedIndex == 2)
+                range = TimeSpan.FromDays(14);
+
+            try
+            {
+                this.prBusy.IsActive = true;
+                this.IsEnabled = false;
+
+                this.myService.BeginGetTimeZoneData(this.cbTimeZoneGlobal.SelectedIndex - 12, range, this.GetTimeZoneDataCallBack, null);
+            }
+            catch { this.InitializeServer(); }
+        }
+
+        private int oldTab = 0;
+        private void tabMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.first) return;
+            if (oldTab == this.tabMain.SelectedIndex) return;
+
+            if (this.tabMain.SelectedIndex == 0)
+                this.cbThisTime_SelectionChanged(null, null);
+            else if (this.tabMain.SelectedIndex == 1)
+                this.cbGlobalTimeZone_SelectionChanged(null, null);
+
+            this.oldTab = this.tabMain.SelectedIndex;
+
+        }
+
+        private void cbGlobalTimeZone_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.first) return;
+
+            TimeSpan range = TimeSpan.FromDays(1);
+            if (this.cbGlobalTimeZone.SelectedIndex == 0)
+                range = TimeSpan.FromHours(24);
+            else if (this.cbGlobalTimeZone.SelectedIndex == 1)
+                range = TimeSpan.FromDays(7);
+            else if (this.cbGlobalTimeZone.SelectedIndex == 2)
+                range = TimeSpan.FromDays(14);
+
+            this.prBusy.IsActive = true;
+            this.IsEnabled = false;
+
+            try
+            {
+                this.myService.BeginGetTimeZoneData(this.cbTimeZoneGlobal.SelectedIndex - 12, range, this.GetTimeZoneDataCallBack, null);
+            }
+            catch { this.InitializeServer(); }
+        }
+
+        private void InitializeServer()
+        {
+            myService = new RandomServerClient();
+            myService.Endpoint.Address = new EndpointAddress(string.Format("http://{0}:3030", "http://server.pypem.com"));//server.pypem.com//127.0.0.1
+            myService.InnerChannel.OperationTimeout = new TimeSpan(0, 2, 30);
+
+            Dispatcher.Invoke(() => this.prBusy.IsActive = false);
+            Dispatcher.Invoke(() => this.IsEnabled = true);
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.first = false;
+        }
+
+        private void btRefreshLocal_Click(object sender, RoutedEventArgs e)
+        {
+            this.cbThisTime_SelectionChanged(null, null);
         }
     }
 }
