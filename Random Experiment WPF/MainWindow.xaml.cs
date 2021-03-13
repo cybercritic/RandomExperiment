@@ -54,6 +54,9 @@ namespace Random_Experiment_WPF
         public MainWindow()
         {
             InitializeComponent();
+            myService = new RandomServerClient();
+            myService.Endpoint.Address = new EndpointAddress(string.Format("http://{0}:3030", "server.pypem.com"));//server.pypem.com//127.0.0.1
+            myService.InnerChannel.OperationTimeout = new TimeSpan(0, 2, 30);
 
             TimeZone localZone = TimeZone.CurrentTimeZone;
             TimeSpan currentOffset = localZone.GetUtcOffset(DateTime.Now);
@@ -95,10 +98,6 @@ namespace Random_Experiment_WPF
             Properties.Settings.Default.startup = startup;
             Properties.Settings.Default.Save();
 
-            myService = new RandomServerClient();
-            myService.Endpoint.Address = new EndpointAddress(string.Format("http://{0}:3030", "server.pypem.com"));//server.pypem.com//127.0.0.1
-            myService.InnerChannel.OperationTimeout = new TimeSpan(0, 2, 30);
-            
             this.myGlobalData = new List<SQLData>();
             this.myLocalData = new List<SQLData>();
 
@@ -133,7 +132,7 @@ namespace Random_Experiment_WPF
                 return false;
             }
         }
-        bool test = false;
+        bool test = true;
         private void Compute(object data)
         {
             Stopwatch time = new Stopwatch();
@@ -172,7 +171,7 @@ namespace Random_Experiment_WPF
                     time.Restart();
                 }
 
-                if (test) return;
+                //if (test) return;
             }
         }
         private void SubmitData(List<double> values)
@@ -260,7 +259,8 @@ namespace Random_Experiment_WPF
         {
             try
             {
-                if(this.myService.EndSubmitStatus(result).ToString().IndexOf("error") != -1)
+                string incoming = this.myService.EndSubmitStatus(result).ToString();
+                if (incoming.IndexOf("error") != -1)
                     Dispatcher.Invoke(() => this.lbLastSubmit.Content = "[error]");
             }
             catch

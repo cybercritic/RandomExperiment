@@ -44,12 +44,12 @@ namespace Random_Experiment_Server.WCF
             if (ServerMain.DDOSlist.Count(p => (string)p.Item1 == ip) > 10)
             {
                 Supporting.WriteLog($"[{ip}]:DDOS triggered");
+                ServerMain.Instance.myStats.Add(new ServerMain.ServerStats { ip = ip, served = ServerMain.Served.DDOS, time = DateTime.UtcNow });
                 return true;
             }
 
             ServerMain.DDOSlist.Add(new Tuple<string, DateTime>(ip, DateTime.UtcNow));
-            ServerMain.Instance.myStats.Add(new ServerMain.ServerStats { ip = ip, served = ServerMain.Served.DDOS, time = DateTime.UtcNow });
-
+            
             return false;
         }
 
@@ -84,16 +84,28 @@ namespace Random_Experiment_Server.WCF
             ServerMain.Instance.Sessions.RemoveAll(p => p.IP == ip);
 
             if (data.Count < 2000)
+            {
+                Supporting.WriteLog($"[{ip}]:error:data count");
                 return "error:green";
+            }
 
-            if (DateTime.UtcNow.Ticks - current.Time.Ticks < 0 || DateTime.UtcNow - current.Time > new TimeSpan(0, 2, 0))
+            if (DateTime.UtcNow.Ticks - current.Time.Ticks < 0 || DateTime.UtcNow - current.Time > TimeSpan.FromMinutes(2))
+            {
+                Supporting.WriteLog($"[{ip}]:error:time");
                 return "error:green";
+            }
 
-            if (DateTime.UtcNow.Ticks - data.Time.Ticks < 0 || DateTime.UtcNow - data.Time > new TimeSpan(0, 2, 0))
+            if (DateTime.UtcNow.Ticks - data.Time.Ticks < 0 || DateTime.UtcNow - data.Time > TimeSpan.FromMinutes(2))
+            {
+                Supporting.WriteLog($"[{ip}]:error:time utc");
                 return "error:green";
+            }
 
             if (ServerMain.Instance.mySQL.AddData(data).IndexOf("error") != -1)
+            {
+                Supporting.WriteLog($"[{ip}]:error:sql failed");
                 return "error:SQL failed";
+            }
 
             Supporting.WriteLog($"[{ip}][{data.User.Substring(0, 8)}]:Added data[{data.Mean.ToString("N4")}][{data.Median.ToString("N4")}][{data.StdDev.ToString("N4")}][{data.Active}][{data.Count}]");
             ServerMain.Instance.myStats.Add(new ServerMain.ServerStats { ip = ip, served = ServerMain.Served.Submit, time = DateTime.UtcNow });
