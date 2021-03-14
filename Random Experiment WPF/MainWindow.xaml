@@ -66,7 +66,7 @@
                         <Label Content="7 days"/>
                         <Label Content="2 weeks"/>
                     </ComboBox>
-                    <lvc:CartesianChart Series="{Binding GlobalCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="10,31,10,21">
+                    <lvc:CartesianChart x:Name="grGlobal" Series="{Binding GlobalCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="10,31,10,21">
                         <lvc:CartesianChart.AxisY>
                             <lvc:Axis Title="Range" LabelFormatter="{Binding YFormatterB}" MaxValue="1" MinValue="0"></lvc:Axis>
                         </lvc:CartesianChart.AxisY>

@@ -327,6 +327,8 @@ namespace Random_Experiment_WPF
                 labels.Add(data.Time.ToString("HH:mm dd/MM"));
             }
 
+            DataContext = null;
+
             LocalCollection = new SeriesCollection
             {
                 new LineSeries
@@ -372,6 +374,8 @@ namespace Random_Experiment_WPF
                 labels.Add(data.Time.ToString("HH:mm dd/MM"));
             }
 
+            DataContext = null;
+
             GlobalCollection = new SeriesCollection
             {
                 new LineSeries
@@ -396,7 +400,6 @@ namespace Random_Experiment_WPF
 
             LabelsGlobal = labels.ToArray();
             YFormatterB = value => value.ToString("N4");
-
 
             DataContext = this;
         }
@@ -524,6 +527,7 @@ namespace Random_Experiment_WPF
         private void tabMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.first) return;
+
             if (oldTab == this.tabMain.SelectedIndex) return;
 
             if (this.tabMain.SelectedIndex == 0)
