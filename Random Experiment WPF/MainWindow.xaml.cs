@@ -333,14 +333,14 @@ namespace Random_Experiment_WPF
             {
                 new LineSeries
                 {
-                    Title = "Mean",
-                    Values = mean,
+                    Title = "Median",
+                    Values = median,
                     PointGeometry = null
                 },
                 new LineSeries
                 {
-                    Title = "Median",
-                    Values = median,
+                    Title = "Mean",
+                    Values = mean,
                     PointGeometry = null
                 },
                 new LineSeries
@@ -380,14 +380,14 @@ namespace Random_Experiment_WPF
             {
                 new LineSeries
                 {
-                    Title = "Mean",
-                    Values = mean,
+                    Title = "Median",
+                    Values = median,
                     PointGeometry = null
                 },
                 new LineSeries
                 {
-                    Title = "Median",
-                    Values = median,
+                    Title = "Mean",
+                    Values = mean,
                     PointGeometry = null
                 },
                 new LineSeries

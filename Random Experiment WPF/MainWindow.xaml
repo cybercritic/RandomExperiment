@@ -40,7 +40,6 @@
                             <ComboBox x:Name="cbThisTime" SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,103,90,0" SelectionChanged="cbThisTime_SelectionChanged">
                                 <Label Content="24 hours"/>
                                 <Label Content="7 days"/>
-                                <Label Content="2 weeks"/>
                             </ComboBox>
                             <Button x:Name="btRefreshLocal" Content="Refresh" HorizontalAlignment="Right" Margin="0,102,10,0" VerticalAlignment="Top" Width="75" Click="btRefreshLocal_Click"/>
                         </Grid>
@@ -64,7 +63,6 @@
                     <ComboBox x:Name="cbGlobalTimeZone" SelectedIndex="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,0,145,0" SelectionChanged="cbGlobalTimeZone_SelectionChanged">
                         <Label Content="24 hours"/>
                         <Label Content="7 days"/>
-                        <Label Content="2 weeks"/>
                     </ComboBox>
                     <lvc:CartesianChart x:Name="grGlobal" Series="{Binding GlobalCollection}" LegendLocation="Right" Zoom="Xy" Pan="Xy" Margin="10,31,10,21">
                         <lvc:CartesianChart.AxisY>

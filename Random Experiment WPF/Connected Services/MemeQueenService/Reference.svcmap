@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="9e574b59-e4f2-4128-a10a-03a84a873824" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>true</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://127.0.0.1:4040" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="22013c22-7d30-468b-9b8b-57e368ef944c" SourceId="1" SourceUrl="http://127.0.0.1:4040/?xsd=xsd3" />
+    <MetadataFile FileName="item.wsdl" MetadataType="Wsdl" ID="53a9fb20-ab9a-4250-9c6a-f28c1bcf7cb4" SourceId="1" SourceUrl="http://127.0.0.1:4040/?wsdl=wsdl0" />
+    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="503af25f-0fff-41ad-856d-1398f82f4c0d" SourceId="1" SourceUrl="http://127.0.0.1:4040/?xsd=xsd4" />
+    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="d4506eea-7ca7-479a-957e-1f8209477696" SourceId="1" SourceUrl="http://127.0.0.1:4040/?xsd=xsd1" />
+    <MetadataFile FileName="item3.xsd" MetadataType="Schema" ID="2866851a-f6d2-4b1b-a333-8dfc4777c0fd" SourceId="1" SourceUrl="http://127.0.0.1:4040/?xsd=xsd0" />
+    <MetadataFile FileName="MemeQueen.wsdl" MetadataType="Wsdl" ID="cde8a756-8e13-4390-bffd-6bfdf26efea7" SourceId="1" SourceUrl="http://127.0.0.1:4040/?wsdl" />
+    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="e06be44e-37aa-4f0d-9d3b-6edf83b44d71" SourceId="1" SourceUrl="http://127.0.0.1:4040/?disco" />
+    <MetadataFile FileName="item4.xsd" MetadataType="Schema" ID="64c4abe5-7acf-4bc1-b1d1-4e3a55677ca7" SourceId="1" SourceUrl="http://127.0.0.1:4040/?xsd=xsd2" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

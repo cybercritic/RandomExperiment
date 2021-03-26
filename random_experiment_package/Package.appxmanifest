@@ -7,13 +7,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="1e8d66ca-c600-4327-a7eb-712188bd8c18"
-    Publisher="CN=critic"
-    Version="1.0.0.0" />
+    Name="5600cybercritics.RandomExperiment"
+    Publisher="CN=6E2CA0EA-938D-4807-9B83-A70BA9E947CC"
+    Version="1.0.3.0" />
 
   <Properties>
-    <DisplayName>random_experiment_package</DisplayName>
-    <PublisherDisplayName>critic</PublisherDisplayName>
+    <DisplayName>Random Experiment</DisplayName>
+    <PublisherDisplayName>cybercritics</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -31,8 +31,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="random_experiment_package"
-        Description="random_experiment_package"
+        DisplayName="Random Experiment"
+        Description="Random Experiment based on the Global Consciousness Project."
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
