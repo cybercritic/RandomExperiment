@@ -9,7 +9,7 @@
   <Identity
     Name="5600cybercritics.RandomExperiment"
     Publisher="CN=6E2CA0EA-938D-4807-9B83-A70BA9E947CC"
-    Version="1.0.3.0" />
+    Version="1.0.4.0" />
 
   <Properties>
     <DisplayName>Random Experiment</DisplayName>
